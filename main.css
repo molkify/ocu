@@ -49,4 +49,14 @@ h4 {
 
 a {
     font-family: monospace;
+    color:#1c2020
   }
+
+  hr.short-centered {
+    margin: 0 auto;
+    width: 50%;
+    height: 2.5px;
+    border: none;
+    background-color: #ffffff;
+    position: relative;
+}
