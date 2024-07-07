@@ -49,8 +49,13 @@ h4 {
 
 a {
     font-family: monospace;
-    color:#1c2020
+      color: #FFFFFF;
+      text-decoration: none;
   }
+    
+    a:hover {
+      text-decoration: underline;
+    }
 
   hr.short-centered {
     margin: 0 auto;
