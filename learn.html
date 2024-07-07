@@ -9,137 +9,120 @@
   <meta name="description" content="ocu: math, reading, and science all in one bunch">
   <meta name="og:description" content="ocu: math, reading, and science all in one bunch">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,600;1,600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
-
 html {
-background-color: #000000;
+  text-align: center;
+  background-color: #1c2020
 }
 
 h1 {
-  font-weight: bold;
-  font-family: "Prompt", serif;
-  color: #FFF;
+  color: white;
+  font-family: monospace;
 }
 
-h2 {
-  font-family: "Montserrat", serif;
-  color: #FFF;
+h4 {
+  color: white;
+  font-family: monospace;
 }
 
-h3,h4,h5,h6,a,p,button {
-    font-family: "Nunito", serif;
-    color: black;
-}
-
-.button {
-  padding: 10px 20px;
-  font-size: 18px;
-  background-color: #FFF;
-  color: #000000;
-  border: none;
-  border-radius: 4px;
+.a {
+  color: #FFFFFF;
   cursor: pointer;
   margin: 0.5px;
   transition: all 0.3s ease;
+  font-family: monospace
 }
 
-.button:hover {
+.a:hover {
   transform: scale(1.05);
 }
 
-header {
-  background-color: #000000;
-  color: #fff;
-  padding: 30px;
-  position: fixed;
-  top: 0%;
-  left: 7%;
-  margin: 0;
-  z-index: 1000;
-  align-items: center;
-  display: flex;
-  width: 80%;
-  border-bottom-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-  border-left: 3px solid;
-  border-right: 3px solid;
-  border-bottom: 3px solid;
+.row {
+	text-align: center;
+	font-size: 1.3em;
 }
 
-header .button {
-    margin-left: 510%;
+a {
+    font-family: monospace;
+      color: #FFFFFF;
+      text-decoration: none;
+  }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+
+  hr.short-centered {
+    margin: 0 auto;
+    width: 50%;
+    height: 2.5px;
+    border: none;
+    background-color: #ffffff;
+    position: relative;
 }
 
-.glowing-text {
-  text-shadow: 0 0 5px #fff, 0 0 10px #fff;
-}
 </style>
   <meta http-equiv="origin-trial" content="AlK2UR5SkAlj8jjdEc9p3F3xuFYlF6LYjAML3EOqw1g26eCwWPjdmecULvBH5MVPoqKYrOfPhYVL71xAXI1IBQoAAAB8eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="Amm8/NmvvQfhwCib6I7ZsmUxiSCfOxWxHayJwyU1r3gRIItzr7bNQid6O8ZYaE1GSQTa69WwhPC9flq/oYkRBwsAAACCeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiV2ViVmlld1hSZXF1ZXN0ZWRXaXRoRGVwcmVjYXRpb24iLCJleHBpcnkiOjE3NTgwNjcxOTksImlzU3ViZG9tYWluIjp0cnVlfQ=="><meta http-equiv="origin-trial" content="A9uiHDzQFAhqALUhTgTYJcz9XrGH2y0/9AORwCSapUO/f7Uh7ysIzyszNkuWDLqNYg8446Uj48XIstBW1qv/wAQAAACNeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3Mjc4MjcxOTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A9R+gkZL3TWq+Z7RJ2L0c7ZN7FZD5z4mHmVvjrPitg/EMz9P3j5d3W7Vw5ZR9jtJGmWKltM4BO3smNzpCgwYuwwAAACTeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiRmxlZGdlQmlkZGluZ0FuZEF1Y3Rpb25TZXJ2ZXIiLCJleHBpcnkiOjE3Mjc4MjcxOTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"></head>
 <body>
 <br>
-<center>
-<header>
-<a class="button" href="/index.html">Home</a>
-</header>
+<a class="a" href="/">[ home ]</a>
 <br>
 <br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<h1 class="glowing-text">games. | ocu</h1>
-<button class="button" onclick="window.location.href='/semag-code/retrobowl/index.html';">Retro Bowl</button>
+<pre style="font: 10px/9px monospace; color: white; text-align: center;">
+  ______   _______                                         
+  ________________  ____  /   ____  /  _______ ______ _______ ________________
+  _  __ \  ___/  / / /_  /    ___  /   __  __ `/  __ `/_  __ `__ \  _ \_  ___/
+  / /_/ / /__ / /_/ / /_/     __  /    _  /_/ // /_/ /_  / / / / /  __/(__  ) 
+  \____/\___/ \__,_/ (_)      _  /     _\__, / \__,_/ /_/ /_/ /_/\___//____/  
+                              /_/      /____/                                 
+</pre>
+<a class="a" onclick="window.location.href='/semag-code/retrobowl/index.html';">[ Retro Bowl ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/1v1.lol/index.html';">1v1.LOL</button>
+<a class="a" onclick="window.location.href='/semag-code/1v1.lol/index.html';">[ 1v1.LOL ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/slope/index.html';">Slope</button>
+<a class="a" onclick="window.location.href='/semag-code/slope/index.html';">[ Slope ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/eaglercraftx/index.html';">EaglerCraftX</button>
+<a class="a" onclick="window.location.href='/semag-code/eaglercraftx/index.html';">[ EaglerCraftX ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/fnaf/index.html';">FNAF</button>
+<a class="a" onclick="window.location.href='/semag-code/fnaf/index.html';">[ FNAF ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/cookie-clicker/index.html';">Cookie Clicker</button>
+<a class="a" onclick="window.location.href='/semag-code/cookie-clicker/index.html';">[ Cookie Clicker ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/cluster-rush/index.html';">Cluster Rush</button>
+<a class="a" onclick="window.location.href='/semag-code/cluster-rush/index.html';">[ Cluster Rush ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/snow-rider-3d/index.html';">Snow Rider 3D</button>
+<a class="a" onclick="window.location.href='/semag-code/snow-rider-3d/index.html';">[ Snow Rider 3D ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/basketball-stars/index.html';">Basketball Stars</button>
+<a class="a" onclick="window.location.href='/semag-code/basketball-stars/index.html';">[ Basketball Stars ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/monkey-mart/index.html';">Monkey Mart</button>
+<a class="a" onclick="window.location.href='/semag-code/monkey-mart/index.html';">[ Monkey Mart ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/tomb-of-the-mask/index.html';">Tomb Of The Mask</button>
+<a class="a" onclick="window.location.href='/semag-code/tomb-of-the-mask/index.html';">[ Tomb Of The Mask ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/flappy-bird/index.html';">Flappy Bird</button>
+<a class="a" onclick="window.location.href='/semag-code/flappy-bird/index.html';">[ Flappy Bird ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/run-3/index.html';">Run 3</button>
+<a class="a" onclick="window.location.href='/semag-code/run3/index.html';">[ Run 3 ]/a>
 •
-<button class="button" onclick="window.location.href='/semag-code/worlds-hardest-game/index.html';">World's Hardest Game</button>
+<a class="a" onclick="window.location.href='/semag-code/worlds-hardest-game/index.html';">[ World's Hardest Game ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/impossible-quiz/index.html';">The Impossible Quiz</button>
+<a class="a" onclick="window.location.href='/semag-code/tiq/index.html';">[ The Impossible Quiz  ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/impossible-quiz-2/index.html';">The Impossible Quiz 2</button>
+<a class="a" onclick="window.location.href='/semag-code/tiq2/index.html';">[ The Impossible Quiz 2 ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/bitlife/index.html';">Bitlife</button>
+<a class="a" onclick="window.location.href='/semag-code/bitlife/index.html';">[ Bitlife ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/subway-surfers/index.html';">Subway Surfers</button>
+<a class="a" onclick="window.location.href='/semag-code/subway-surfers/index.html';">[ Subway Surfers ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/13/index.html';">13 days in hell</button>
+<a class="a" onclick="window.location.href='/semag-code/13/index.html';">[ 13 days in hell ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/super-mario-bros/index.html';">Super Mario Bros</button>
+<a class="a" onclick="window.location.href='/semag-code/super-mario-bros/index.html';">[ Super Mario Bros ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/portalflash/index.html';">Portal (Flash Edition)</button>
+<a class="a" onclick="window.location.href='/semag-code/portalflash/index.html';">[ Portal (Flash Edition) ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/sm64/index.html';">Super Mario 64</button>
+<a class="a" onclick="window.location.href='/semag-code/sm64/index.html';">[ Super Mario 64 ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/deepest-sword/index.html';">Deepest Sword</button>
+<a class="a" onclick="window.location.href='/semag-code/deepest-sword/index.html';">[ Deepest Sword ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/justfall.lol/index.html';">JustFall.LOL</button>
+<a class="a" onclick="window.location.href='/semag-code/justfall.lol/index.html';">[ JustFall.LOL ]</a>
 •
-<button class="button" onclick="window.location.href='/semag-code/timeshooters3/index.html';">Time Shooter 3 SWAT</button>
-</center>
+<a class="a" onclick="window.location.href='/semag-code/timeshooter3/index.html';">[ Time Shooter 3 SWAT ]</a>
 </body>
 </html>
