@@ -1,29 +1,32 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const input = document.querySelector(".input");
-  input.addEventListener("keydown", handleInput);
-
-  function handleInput(e) {
-    // We only want the function to run if the key pressed is the Enter key
-    if (e.key !== "Enter") return;
-
-    // Run the formatSearch function on the current value of the input
-    const query = formatSearch(input.value);
-
-    // Redirect to         [   uv prefix    ] + [   encoded search query   ]
-    window.location.href = __uv$config.prefix + __uv$config.encodeUrl(query);
+// Ultravoilet v3 code, subject to MIT license.
+"use strict";
+/**
+ *
+ * @param {string} input
+ * @returns {string} Fully qualified URL
+ */
+function search(input) {
+  try {
+    // input is a valid URL:
+    // eg: https://example.com, https://example.com/test?q=param
+    return new URL(input).toString();
+  } catch (err) {
+    // input was not a valid URL
   }
-});
-
-function formatSearch(query) {
-  // This function turns the inputted value into a Google search if it's not a normal URL
-  try {
-    return new URL(query).toString();
-  } catch (e) {}
 
   try {
-    const url = new URL(`http://${query}`);
+    // input is a valid URL when http:// is added to the start:
+    // eg: example.com, https://example.com/test?q=param
+    const url = new URL(`http://${input}`);
+    // only if the hostname has a TLD/subdomain
     if (url.hostname.includes(".")) return url.toString();
-  } catch (e) {}
+  } catch (err) {
+    // input was not valid URL
+  }
 
-  return new URL(`https://google.com/search?q=${query}`).toString();
+  // input may have been a valid URL, however the hostname was invalid
+
+  // Attempts to convert the input to a fully qualified URL have failed
+  // Treat the input as a search query
+  return "https://duckduckgo.com/?q=%s".replace("%s", encodeURIComponent(input));
 }
