@@ -1,6 +1,6 @@
 html {
   text-align: center;
-  background-color: black;
+  background-color: #1c2020
 }
 
 .input {
@@ -39,7 +39,7 @@ h4 {
   cursor: pointer;
   margin: 0.5px;
   transition: all 0.3s ease;
-  font-family: "Prompt", serif;
+  font-family: monospace
 }
 
 .button:hover {
