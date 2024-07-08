@@ -1,5 +1,3 @@
-// Ultravoilet v3 code, subject to MIT license.
-
 importScripts('../epoxy/index.js');
 importScripts('uv.bundle.js');
 importScripts('uv.config.js');
