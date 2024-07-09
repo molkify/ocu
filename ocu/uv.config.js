@@ -1,5 +1,5 @@
 self.__uv$config = {
-  prefix: '/service',
+  prefix: '/service/',
   bare:'https://superfat.yourmom.eu.org',
   encodeUrl: Ultraviolet.codec.xor.encode,
   decodeUrl: Ultraviolet.codec.xor.decode,
