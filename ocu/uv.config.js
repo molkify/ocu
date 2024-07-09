@@ -1,6 +1,6 @@
 self.__uv$config = {
-  prefix: '/ocu/service',
-  bare:'https://skibzy.global.ssl.fastly.net/bare/',
+  prefix: '/service',
+  bare:'https://superfat.yourmom.eu.org',
   encodeUrl: Ultraviolet.codec.xor.encode,
   decodeUrl: Ultraviolet.codec.xor.decode,
   handler: '/ocu/uv.handler.js',

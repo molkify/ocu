@@ -1,1129 +1,1067 @@
-if (!self.__uv) {
-    __uvHook(self, self.__uv$config, self.__uv$config.bare);
-};
-
-async function __uvHook(window, config = {}, bare = '/bare/') {
-    if ('__uv' in window && window.__uv instanceof Ultraviolet) return false;
-
-    if (window.document && !!window.window) {
-        window.document.querySelectorAll("script[__uv-script]").forEach(node => node.remove())
-    };
-
-    const worker = !window.window;
-    const master = '__uv';
-    const methodPrefix = '__uv$';
-    const __uv = new Ultraviolet({
-        ...config,
-        window,
-    });
-
-    if (typeof config.construct === 'function') {
-        config.construct(__uv, worker ? 'worker' : 'window');
-    };
-
-    const { client } = __uv;
-    const {
-        HTMLMediaElement,
-        HTMLScriptElement,
-        HTMLAudioElement,
-        HTMLVideoElement,
-        HTMLInputElement,
-        HTMLEmbedElement,
-        HTMLTrackElement,
-        HTMLAnchorElement,
-        HTMLIFrameElement,
-        HTMLAreaElement,
-        HTMLLinkElement,
-        HTMLBaseElement,
-        HTMLFormElement,
-        HTMLImageElement,
-        HTMLSourceElement,
-    } = window;
-
-    client.nativeMethods.defineProperty(window, '__uv', {
-        value: __uv,
-        enumerable: false,
-    });
-
-
-    __uv.meta.origin = location.origin;
-    __uv.location = client.location.emulate(
-        (href) => {
-            if (href === 'about:srcdoc') return new URL(href);
-            if (href.startsWith('blob:')) href = href.slice('blob:'.length);
-            return new URL(__uv.sourceUrl(href));
-        },
-        (href) => {
-            return __uv.rewriteUrl(href);
-        },
-    );
-
-    __uv.cookieStr = window.__uv$cookies || '';
-    __uv.meta.url = __uv.location;
-    __uv.domain = __uv.meta.url.host;
-    __uv.blobUrls = new window.Map();
-    __uv.referrer = '';
-    __uv.cookies = [];
-    __uv.localStorageObj = {};
-    __uv.sessionStorageObj = {};
-
-    try {
-        __uv.bare = new URL(bare, window.location.href);
-    } catch(e) {
-        __uv.bare = window.parent.__uv.bare;
-    };
-
-    if (__uv.location.href === 'about:srcdoc') {
-        __uv.meta = window.parent.__uv.meta;
-    };
-
-    if (window.EventTarget) {
-        __uv.addEventListener = window.EventTarget.prototype.addEventListener;
-        __uv.removeListener = window.EventTarget.prototype.removeListener;
-        __uv.dispatchEvent = window.EventTarget.prototype.dispatchEvent;
-    };
-
-    // Storage wrappers
-    client.nativeMethods.defineProperty(client.storage.storeProto, '__uv$storageObj', {
+(() => {
+    var _ = self.Ultraviolet,
+      B = self.UVClient,
+      S = self.__uv$config,
+      h = self.__uv$bareData,
+      p = self.__uv$bareURL,
+      O = self.__uv$cookies;
+    if (typeof h != "object" || typeof p != "string" || typeof O != "string")
+      throw new TypeError("Unable to load global UV data");
+    self.__uv || P(self);
+    self.__uvHook = P;
+    function P(o) {
+      if ("__uv" in o && o.__uv instanceof _) return !1;
+      o.document &&
+        o.window &&
+        o.document
+          .querySelectorAll("script[__uv-script]")
+          .forEach((t) => t.remove());
+      let j = !o.window,
+        k = "__uv",
+        l = "__uv$",
+        e = new _(S),
+        r = new B(o),
+        {
+          HTMLMediaElement: y,
+          HTMLScriptElement: U,
+          HTMLAudioElement: L,
+          HTMLVideoElement: T,
+          HTMLInputElement: H,
+          HTMLEmbedElement: $,
+          HTMLTrackElement: W,
+          HTMLAnchorElement: C,
+          HTMLIFrameElement: m,
+          HTMLAreaElement: A,
+          HTMLLinkElement: I,
+          HTMLBaseElement: R,
+          HTMLFormElement: D,
+          HTMLImageElement: v,
+          HTMLSourceElement: N,
+        } = o;
+      r.nativeMethods.defineProperty(o, "__uv", { value: e, enumerable: !1 }),
+        (e.meta.origin = location.origin),
+        (e.location = r.location.emulate(
+          (t) =>
+            t === "about:srcdoc"
+              ? new URL(t)
+              : (t.startsWith("blob:") && (t = t.slice(5)),
+                new URL(e.sourceUrl(t))),
+          (t) => e.rewriteUrl(t)
+        ));
+      let u = O;
+      (e.meta.url = e.location),
+        (e.domain = e.meta.url.host),
+        (e.blobUrls = new o.Map()),
+        (e.referrer = ""),
+        (e.cookies = []),
+        (e.localStorageObj = {}),
+        (e.sessionStorageObj = {});
+      let M = new _.BareClient(p, h);
+      if (
+        ((e.bareClient = M),
+        e.location.href === "about:srcdoc" && (e.meta = o.parent.__uv.meta),
+        o.EventTarget &&
+          ((e.addEventListener = o.EventTarget.prototype.addEventListener),
+          (e.removeListener = o.EventTarget.prototype.removeListener),
+          (e.dispatchEvent = o.EventTarget.prototype.dispatchEvent)),
+        r.nativeMethods.defineProperty(r.storage.storeProto, "__uv$storageObj", {
+          get() {
+            if (this === r.storage.sessionStorage) return e.sessionStorageObj;
+            if (this === r.storage.localStorage) return e.localStorageObj;
+          },
+          enumerable: !1,
+        }),
+        o.localStorage)
+      ) {
+        for (let t in o.localStorage)
+          t.startsWith(l + e.location.origin + "@") &&
+            (e.localStorageObj[t.slice((l + e.location.origin + "@").length)] =
+              o.localStorage.getItem(t));
+        e.lsWrap = r.storage.emulate(r.storage.localStorage, e.localStorageObj);
+      }
+      if (o.sessionStorage) {
+        for (let t in o.sessionStorage)
+          t.startsWith(l + e.location.origin + "@") &&
+            (e.sessionStorageObj[t.slice((l + e.location.origin + "@").length)] =
+              o.sessionStorage.getItem(t));
+        e.ssWrap = r.storage.emulate(
+          r.storage.sessionStorage,
+          e.sessionStorageObj
+        );
+      }
+      let g = o.document ? r.node.baseURI.get.call(o.document) : o.location.href,
+        x = e.sourceUrl(g);
+      r.nativeMethods.defineProperty(e.meta, "base", {
         get() {
-            if (this === client.storage.sessionStorage) return __uv.sessionStorageObj;
-            if (this === client.storage.localStorage) return __uv.localStorageObj;
+          return o.document
+            ? (r.node.baseURI.get.call(o.document) !== g &&
+                ((g = r.node.baseURI.get.call(o.document)), (x = e.sourceUrl(g))),
+              x)
+            : e.meta.url.href;
         },
-        enumerable: false,
-    });
-
-    if (window.localStorage) {
-        for (const key in window.localStorage) {
-            if (key.startsWith(methodPrefix + __uv.location.origin + '@')) {
-                __uv.localStorageObj[key.slice((methodPrefix + __uv.location.origin + '@').length)] = window.localStorage.getItem(key);
-            };
-        };
-
-        __uv.lsWrap = client.storage.emulate(client.storage.localStorage, __uv.localStorageObj);
-    };
-
-    if (window.sessionStorage) {
-        for (const key in window.sessionStorage) {
-            if (key.startsWith(methodPrefix + __uv.location.origin + '@')) {
-                __uv.sessionStorageObj[key.slice((methodPrefix + __uv.location.origin + '@').length)] = window.sessionStorage.getItem(key);
-            };
-        };
-
-        __uv.ssWrap = client.storage.emulate(client.storage.sessionStorage, __uv.sessionStorageObj);
-    };
-
-
-
-    let rawBase = window.document ? client.node.baseURI.get.call(window.document) : window.location.href;
-    let base = __uv.sourceUrl(rawBase);
-
-    client.nativeMethods.defineProperty(__uv.meta, 'base', {
-        get() {
-            if (!window.document) return __uv.meta.url.href;
-
-            if (client.node.baseURI.get.call(window.document) !== rawBase) {
-                rawBase = client.node.baseURI.get.call(window.document);
-                base = __uv.sourceUrl(rawBase);
-            };
-
-            return base;
-        },
-    });
-
-
-    __uv.methods = {
-        setSource: methodPrefix + 'setSource',
-        source: methodPrefix + 'source',
-        location: methodPrefix + 'location',
-        function: methodPrefix + 'function',
-        string: methodPrefix + 'string',
-        eval: methodPrefix + 'eval',
-        parent: methodPrefix + 'parent',
-        top: methodPrefix + 'top',
-    };
-
-    __uv.filterKeys = [
-        master,
-        __uv.methods.setSource,
-        __uv.methods.source,
-        __uv.methods.location,
-        __uv.methods.function,
-        __uv.methods.string,
-        __uv.methods.eval,
-        __uv.methods.parent,
-        __uv.methods.top,
-        methodPrefix + 'protocol',
-        methodPrefix + 'storageObj',
-        methodPrefix + 'url',
-        methodPrefix + 'modifiedStyle',
-        methodPrefix + 'config',
-        methodPrefix + 'dispatched',
-        'Ultraviolet',
-        '__uvHook',
-    ];
-
-
-    client.on('wrap', (target, wrapped) => {
-        client.nativeMethods.defineProperty(wrapped, 'name', client.nativeMethods.getOwnPropertyDescriptor(target, 'name'));
-        client.nativeMethods.defineProperty(wrapped, 'length', client.nativeMethods.getOwnPropertyDescriptor(target, 'length'));
-
-        client.nativeMethods.defineProperty(wrapped, __uv.methods.string, {
-            enumerable: false,
-            value: client.nativeMethods.fnToString.call(target),
-        });
-
-        client.nativeMethods.defineProperty(wrapped, __uv.methods.function, {
-            enumerable: false,
-            value: target,
-        });
-    });
-
-    client.fetch.on('request', event => {
-        event.data.input = __uv.rewriteUrl(event.data.input);
-    });
-
-    client.fetch.on('requestUrl', event => {
-        event.data.value = __uv.sourceUrl(event.data.value);
-    });
-
-    client.fetch.on('responseUrl', event => {
-        event.data.value = __uv.sourceUrl(event.data.value);
-    });
-
-    // XMLHttpRequest
-    client.xhr.on('open', event => {
-        event.data.input = __uv.rewriteUrl(event.data.input);
-    });
-
-    client.xhr.on('responseUrl', event => {
-        event.data.value = __uv.sourceUrl(event.data.value);
-    });
-
-
-    // Workers
-    client.workers.on('worker', event => {
-        event.data.url = __uv.rewriteUrl(event.data.url);
-    });
-
-    client.workers.on('addModule', event => {
-        event.data.url = __uv.rewriteUrl(event.data.url);
-    });
-
-    client.workers.on('importScripts', event => {
-        for (const i in event.data.scripts) {
-            event.data.scripts[i] = __uv.rewriteUrl(event.data.scripts[i]);
-        };
-    });
-
-    client.workers.on('postMessage', event => {
-        let to = event.data.origin;
-
-        event.data.origin = '*';
-        event.data.message = {
-            __data: event.data.message,
-            __origin: __uv.meta.url.origin,
-            __to: to,
-        };
-    });
-
-    // Navigator
-    client.navigator.on('sendBeacon', event => {
-        event.data.url = __uv.rewriteUrl(event.data.url);
-    });
-
-    // Cookies
-    client.document.on('getCookie', event => {
-        event.data.value = __uv.cookieStr;
-    });
-
-    client.document.on('setCookie', event => {
-        Promise.resolve(__uv.cookie.setCookies(event.data.value, __uv.db, __uv.meta)).then(() => {
-            __uv.cookie.db().then(db => {
-                __uv.cookie.getCookies(db).then(cookies => {
-                    __uv.cookieStr = __uv.cookie.serialize(cookies, __uv.meta, true);
-                });
+      }),
+        (e.methods = {
+          setSource: l + "setSource",
+          source: l + "source",
+          location: l + "location",
+          function: l + "function",
+          string: l + "string",
+          eval: l + "eval",
+          parent: l + "parent",
+          top: l + "top",
+        }),
+        (e.filterKeys = [
+          k,
+          e.methods.setSource,
+          e.methods.source,
+          e.methods.location,
+          e.methods.function,
+          e.methods.string,
+          e.methods.eval,
+          e.methods.parent,
+          e.methods.top,
+          l + "protocol",
+          l + "storageObj",
+          l + "url",
+          l + "modifiedStyle",
+          l + "config",
+          l + "dispatched",
+          "Ultraviolet",
+          "__uvHook",
+        ]),
+        r.on("wrap", (t, a) => {
+          r.nativeMethods.defineProperty(
+            a,
+            "name",
+            r.nativeMethods.getOwnPropertyDescriptor(t, "name")
+          ),
+            r.nativeMethods.defineProperty(
+              a,
+              "length",
+              r.nativeMethods.getOwnPropertyDescriptor(t, "length")
+            ),
+            r.nativeMethods.defineProperty(a, e.methods.string, {
+              enumerable: !1,
+              value: r.nativeMethods.fnToString.call(t),
+            }),
+            r.nativeMethods.defineProperty(a, e.methods.function, {
+              enumerable: !1,
+              value: t,
             });
-        });
-        const cookie = __uv.cookie.setCookie(event.data.value)[0];
-
-        if (!cookie.path) cookie.path = '/';
-        if (!cookie.domain) cookie.domain = __uv.meta.url.hostname;
-
-        if (__uv.cookie.validateCookie(cookie, __uv.meta, true)) {
-            if (__uv.cookieStr.length) __uv.cookieStr += '; ';
-            __uv.cookieStr += `${cookie.name}=${cookie.value}`;
-        };
-
-        event.respondWith(event.data.value);
-    });
-
-    // HTML
-    client.element.on('setInnerHTML', event => {
-        switch (event.that.tagName) {
-            case 'SCRIPT':
-                event.data.value = __uv.js.rewrite(event.data.value);
-                break;
-            case 'STYLE':
-                event.data.value = __uv.rewriteCSS(event.data.value);
-                break;
+        }),
+        r.fetch.on("request", (t) => {
+          t.data.input = e.rewriteUrl(t.data.input);
+        }),
+        r.fetch.on("requestUrl", (t) => {
+          t.data.value = e.sourceUrl(t.data.value);
+        }),
+        r.fetch.on("responseUrl", (t) => {
+          t.data.value = e.sourceUrl(t.data.value);
+        }),
+        r.xhr.on("open", (t) => {
+          t.data.input = e.rewriteUrl(t.data.input);
+        }),
+        r.xhr.on("responseUrl", (t) => {
+          t.data.value = e.sourceUrl(t.data.value);
+        }),
+        r.workers.on("worker", (t) => {
+          t.data.url = e.rewriteUrl(t.data.url);
+        }),
+        r.workers.on("addModule", (t) => {
+          t.data.url = e.rewriteUrl(t.data.url);
+        }),
+        r.workers.on("importScripts", (t) => {
+          for (let a in t.data.scripts)
+            t.data.scripts[a] = e.rewriteUrl(t.data.scripts[a]);
+        }),
+        r.workers.on("postMessage", (t) => {
+          let a = t.data.origin;
+          (t.data.origin = "*"),
+            (t.data.message = {
+              __data: t.data.message,
+              __origin: e.meta.url.origin,
+              __to: a,
+            });
+        }),
+        r.navigator.on("sendBeacon", (t) => {
+          t.data.url = e.rewriteUrl(t.data.url);
+        }),
+        r.document.on("getCookie", (t) => {
+          t.data.value = u;
+        }),
+        r.document.on("setCookie", (t) => {
+          e.cookie.db().then((i) => {
+            e.cookie.setCookies(t.data.value, i, e.meta),
+              e.cookie.getCookies(i).then((s) => {
+                u = e.cookie.serialize(s, e.meta, !0);
+              });
+          });
+          let a = e.cookie.setCookie(t.data.value)[0];
+          a.path || (a.path = "/"),
+            a.domain || (a.domain = e.meta.url.hostname),
+            e.cookie.validateCookie(a, e.meta, !0) &&
+              (u.length && (u += "; "), (u += `${a.name}=${a.value}`)),
+            t.respondWith(t.data.value);
+        }),
+        r.element.on("setInnerHTML", (t) => {
+          switch (t.that.tagName) {
+            case "SCRIPT":
+              t.data.value = e.js.rewrite(t.data.value);
+              break;
+            case "STYLE":
+              t.data.value = e.rewriteCSS(t.data.value);
+              break;
             default:
-                event.data.value = __uv.rewriteHtml(event.data.value);
-        };
-    });
-
-    client.element.on('getInnerHTML', event => {
-        switch (event.that.tagName) {
-            case 'SCRIPT':
-                event.data.value = __uv.js.source(event.data.value);
-                break;
+              t.data.value = e.rewriteHtml(t.data.value);
+          }
+        }),
+        r.element.on("getInnerHTML", (t) => {
+          switch (t.that.tagName) {
+            case "SCRIPT":
+              t.data.value = e.js.source(t.data.value);
+              break;
             default:
-                event.data.value = __uv.sourceHtml(event.data.value);
-        };
-    });
-
-    client.element.on('setOuterHTML', event => {
-        event.data.value = __uv.rewriteHtml(event.data.value, { document: event.that.tagName === 'HTML' });
-    });
-
-    client.element.on('getOuterHTML', event => {
-        switch (event.that.tagName) {
-            case 'HEAD':
-                event.data.value = __uv.sourceHtml(
-                    event.data.value.replace(/<head(.*)>(.*)<\/head>/s, '<op-head$1>$2</op-head>')
-                ).replace(/<op-head(.*)>(.*)<\/op-head>/s, '<head$1>$2</head>');
-                break;
-            case 'BODY':
-                event.data.value = __uv.sourceHtml(
-                    event.data.value.replace(/<body(.*)>(.*)<\/body>/s, '<op-body$1>$2</op-body>')
-                ).replace(/<op-body(.*)>(.*)<\/op-body>/s, '<body$1>$2</body>');
-                break;
-            default:
-                event.data.value = __uv.sourceHtml(event.data.value, { document: event.that.tagName === 'HTML' });
-                break;
-        };
-
-        //event.data.value = __uv.sourceHtml(event.data.value, { document: event.that.tagName === 'HTML' });
-    });
-
-    client.document.on('write', event => {
-        if (!event.data.html.length) return false;
-        event.data.html = [__uv.rewriteHtml(event.data.html.join(''))];
-    });
-
-    client.document.on('writeln', event => {
-        if (!event.data.html.length) return false;
-        event.data.html = [__uv.rewriteHtml(event.data.html.join(''))];
-    });
-
-    client.element.on('insertAdjacentHTML', event => {
-        event.data.html = __uv.rewriteHtml(event.data.html);
-    });
-
-    // EventSource
-
-    client.eventSource.on('construct', event => {
-        event.data.url = __uv.rewriteUrl(event.data.url);
-    });
-
-
-    client.eventSource.on('url', event => {
-        event.data.url = __uv.rewriteUrl(event.data.url);
-    });
-
-    // History
-    client.history.on('replaceState', event => {
-        if (event.data.url) event.data.url = __uv.rewriteUrl(event.data.url, '__uv' in event.that ? event.that.__uv.meta : __uv.meta);
-    });
-    client.history.on('pushState', event => {
-        if (event.data.url) event.data.url = __uv.rewriteUrl(event.data.url, '__uv' in event.that ? event.that.__uv.meta : __uv.meta);
-    });
-
-    // Element get set attribute methods
-    client.element.on('getAttribute', event => {
-        if (client.element.hasAttribute.call(event.that, __uv.attributePrefix + '-attr-' + event.data.name)) {
-            event.respondWith(
-                event.target.call(event.that, __uv.attributePrefix + '-attr-' + event.data.name)
-            );
-        };
-    });
-
-    // Message
-    client.message.on('postMessage', event => {
-        let to = event.data.origin;
-        let call = __uv.call;
-
-
-        if (event.that) {
-            call = event.that.__uv$source.call;
-        };
-
-        event.data.origin = '*';
-        event.data.message = {
-            __data: event.data.message,
-            __origin: (event.that || event.target).__uv$source.location.origin,
-            __to: to,
-        };
-
-        event.respondWith(
-            worker ?
-            call(event.target, [event.data.message, event.data.transfer], event.that) :
-            call(event.target, [event.data.message, event.data.origin, event.data.transfer], event.that)
-        );
-
-    });
-
-    client.message.on('data', event => {
-        const { value: data } = event.data;
-        if (typeof data === 'object' && '__data' in data && '__origin' in data) {
-            event.respondWith(data.__data);
-        };
-    });
-
-    client.message.on('origin', event => {
-        const data = client.message.messageData.get.call(event.that);
-        if (typeof data === 'object' && data.__data && data.__origin) {
-            event.respondWith(data.__origin);
-        };
-    });
-
-    client.overrideDescriptor(window, 'origin', {
-        get: (target, that) => {
-            return __uv.location.origin;
-        },
-    });
-
-    client.node.on('baseURI', event => {
-        if (event.data.value.startsWith(window.location.origin)) event.data.value = __uv.sourceUrl(event.data.value);
-    });
-
-    client.element.on('setAttribute', event => {
-        if (event.that instanceof HTMLMediaElement && event.data.name === 'src' && event.data.value.startsWith('blob:')) {
-            event.target.call(event.that, __uv.attributePrefix + '-attr-' + event.data.name, event.data.value);
-            event.data.value = __uv.blobUrls.get(event.data.value);
-            return;
-        };
-
-        if (__uv.attrs.isUrl(event.data.name)) {
-            event.target.call(event.that, __uv.attributePrefix + '-attr-' + event.data.name, event.data.value);
-            event.data.value = __uv.rewriteUrl(event.data.value);
-        };
-
-        if (__uv.attrs.isStyle(event.data.name)) {
-            event.target.call(event.that, __uv.attributePrefix + '-attr-' + event.data.name, event.data.value);
-            event.data.value = __uv.rewriteCSS(event.data.value, { context: 'declarationList' });
-        };
-
-        if (__uv.attrs.isHtml(event.data.name)) {
-            event.target.call(event.that, __uv.attributePrefix + '-attr-' + event.data.name, event.data.value);
-            event.data.value = __uv.rewriteHtml(event.data.value, {...__uv.meta, document: true, injectHead:__uv.createHtmlInject(__uv.handlerScript, __uv.bundleScript, __uv.configScript, __uv.cookieStr, window.location.href) });
-        };
-
-        if (__uv.attrs.isSrcset(event.data.name)) {
-            event.target.call(event.that, __uv.attributePrefix + '-attr-' + event.data.name, event.data.value);
-            event.data.value = __uv.html.wrapSrcset(event.data.value);
-        };
-
-        if (__uv.attrs.isForbidden(event.data.name)) {
-            event.data.name = __uv.attributePrefix + '-attr-' + event.data.name;
-        };
-    });
-
-    client.element.on('audio', event => {
-        event.data.url = __uv.rewriteUrl(event.data.url);
-    });
-
-    // Element Property Attributes
-    client.element.hookProperty([HTMLAnchorElement, HTMLAreaElement, HTMLLinkElement, HTMLBaseElement], 'href', {
-        get: (target, that) => {
-            return __uv.sourceUrl(
-                target.call(that)
-            );
-        },
-        set: (target, that, [val]) => {
-            client.element.setAttribute.call(that, __uv.attributePrefix + '-attr-href', val)
-            target.call(that, __uv.rewriteUrl(val));
-        },
-    }); 
-
-    client.element.hookProperty([HTMLScriptElement, HTMLAudioElement, HTMLVideoElement,  HTMLMediaElement, HTMLImageElement, HTMLInputElement, HTMLEmbedElement, HTMLIFrameElement, HTMLTrackElement, HTMLSourceElement], 'src', {
-        get: (target, that) => {
-            return __uv.sourceUrl(
-                target.call(that)
-            );
-        },
-        set: (target, that, [val]) => {
-            if (new String(val).toString().trim().startsWith('blob:') && that instanceof HTMLMediaElement) {
-                client.element.setAttribute.call(that, __uv.attributePrefix + '-attr-src', val)
-                return target.call(that, __uv.blobUrls.get(val) || val);
-            };
-
-            client.element.setAttribute.call(that, __uv.attributePrefix + '-attr-src', val)
-            target.call(that, __uv.rewriteUrl(val));
-        },
-    });
-
-    client.element.hookProperty([HTMLFormElement], 'action', {
-        get: (target, that) => {
-            return __uv.sourceUrl(
-                target.call(that)
-            );
-        },
-        set: (target, that, [val]) => {
-            client.element.setAttribute.call(that, __uv.attributePrefix + '-attr-action', val)
-            target.call(that, __uv.rewriteUrl(val));
-        },
-    });
-
-    client.element.hookProperty([HTMLImageElement], 'srcset', {
-        get: (target, that) => {
-            return client.element.getAttribute.call(that, __uv.attributePrefix + '-attr-srcset') || target.call(that);
-        },
-        set: (target, that, [val]) => {
-            client.element.setAttribute.call(that, __uv.attributePrefix + '-attr-srcset', val)
-            target.call(that, __uv.html.wrapSrcset(val));
-        },
-    });
-
-    client.element.hookProperty(HTMLScriptElement, 'integrity', {
-        get: (target, that) => {
-            return client.element.getAttribute.call(that, __uv.attributePrefix + '-attr-integrity');
-        },
-        set: (target, that, [val]) => {
-            client.element.setAttribute.call(that, __uv.attributePrefix + '-attr-integrity', val);
-        },
-    });
-
-    client.element.hookProperty(HTMLIFrameElement, 'sandbox', {
-        get: (target, that) => {
-            return client.element.getAttribute.call(that, __uv.attributePrefix + '-attr-sandbox') || target.call(that);
-        },
-        set: (target, that, [val]) => {
-            client.element.setAttribute.call(that, __uv.attributePrefix + '-attr-sandbox', val);
-        },
-    });
-
-    client.element.hookProperty(HTMLIFrameElement, 'contentWindow', {
-        get: (target, that) => {
-            const win = target.call(that);
-            try {
-                if (!win.__uv) __uvHook(win, config, bare);
-                return win;
-            } catch (e) {
-                return win;
-            };
-        },
-    });
-
-    client.element.hookProperty(HTMLIFrameElement, 'contentDocument', {
-        get: (target, that) => {
-            const doc = target.call(that);
-            try {
-                const win = doc.defaultView
-                if (!win.__uv) __uvHook(win, config, bare);
-                return doc;
-            } catch (e) {
-                return win;
-            };
-        },
-    });
-
-    client.element.hookProperty(HTMLIFrameElement, 'srcdoc', {
-        get: (target, that) => {
-            return client.element.getAttribute.call(that, __uv.attributePrefix + '-attr-srcdoc') || target.call(that);
-        },
-        set: (target, that, [val]) => {
-            target.call(that, __uv.rewriteHtml(val, {
-                document: true,
-                injectHead: __uv.createHtmlInject(__uv.handlerScript, __uv.bundleScript, __uv.configScript, __uv.cookieStr, window.location.href)
-            }))
-        },
-    });
-
-    client.node.on('getTextContent', event => {
-        if (event.that.tagName === 'SCRIPT') {
-            event.data.value = __uv.js.source(event.data.value);
-        };
-    });
-
-    client.node.on('setTextContent', event => {
-        if (event.that.tagName === 'SCRIPT') {
-            event.data.value = __uv.js.rewrite(event.data.value);
-        };
-    });
-
-    // Until proper rewriting is implemented for service workers.
-    // Not sure atm how to implement it with the already built in service worker
-    if ('serviceWorker' in window.navigator) {
-        delete window.Navigator.prototype.serviceWorker;
-    };
-
-    // Document
-    client.document.on('getDomain', event => {
-        event.data.value = __uv.domain;
-    });
-    client.document.on('setDomain', event => {
-        if (!event.data.value.toString().endsWith(__uv.meta.url.hostname.split('.').slice(-2).join('.'))) return event.respondWith('');
-        event.respondWith(__uv.domain = event.data.value);
-    })
-
-    client.document.on('url', event => {
-        event.data.value = __uv.location.href;
-    });
-
-    client.document.on('documentURI', event => {
-        event.data.value = __uv.location.href;
-    });
-
-    client.document.on('referrer', event => {
-        event.data.value = __uv.referrer || __uv.sourceUrl(event.data.value);
-    });
-
-    client.document.on('parseFromString', event => {
-        if (event.data.type !== 'text/html') return false;
-        event.data.string = __uv.rewriteHtml(event.data.string, {...__uv.meta, document: true, });
-    });
-
-    // Attribute (node.attributes)
-    client.attribute.on('getValue', event => {
-        if (client.element.hasAttribute.call(event.that.ownerElement, __uv.attributePrefix + '-attr-' + event.data.name)) {
-            event.data.value = client.element.getAttribute.call(event.that.ownerElement, __uv.attributePrefix + '-attr-' + event.data.name);
-        };
-    });
-
-    client.attribute.on('setValue', event => {
-        if (__uv.attrs.isUrl(event.data.name)) {
-            client.element.setAttribute.call(event.that.ownerElement, __uv.attributePrefix + '-attr-' + event.data.name, event.data.value);
-            event.data.value = __uv.rewriteUrl(event.data.value);
-        };
-
-        if (__uv.attrs.isStyle(event.data.name)) {
-            client.element.setAttribute.call(event.that.ownerElement, __uv.attributePrefix + '-attr-' + event.data.name, event.data.value);
-            event.data.value = __uv.rewriteCSS(event.data.value, { context: 'declarationList' });
-        };
-
-        if (__uv.attrs.isHtml(event.data.name)) {
-            client.element.setAttribute.call(event.that.ownerElement, __uv.attributePrefix + '-attr-' + event.data.name, event.data.value);
-            event.data.value = __uv.rewriteHtml(event.data.value, {...__uv.meta, document: true, injectHead:__uv.createHtmlInject(__uv.handlerScript, __uv.bundleScript, __uv.configScript, __uv.cookieStr, window.location.href) });
-        };
-
-        if (__uv.attrs.isSrcset(event.data.name)) {
-            client.element.setAttribute.call(event.that.ownerElement, __uv.attributePrefix + '-attr-' + event.data.name, event.data.value);
-            event.data.value = __uv.html.wrapSrcset(event.data.value);
-        };
-
-    });
-
-    // URL
-    client.url.on('createObjectURL', event => {
-        let url = event.target.call(event.that, event.data.object);
-        if (url.startsWith('blob:' + location.origin)) {
-            let newUrl = 'blob:' + (__uv.meta.url.href !== 'about:blank' ?  __uv.meta.url.origin : window.parent.__uv.meta.url.origin) + url.slice('blob:'.length + location.origin.length);
-            __uv.blobUrls.set(newUrl, url);
-            event.respondWith(newUrl);
-        } else {
-            event.respondWith(url);
-        };
-    });
-
-    client.url.on('revokeObjectURL', event => {
-        if (__uv.blobUrls.has(event.data.url)) {
-            const old = event.data.url;
-            event.data.url = __uv.blobUrls.get(event.data.url);
-            __uv.blobUrls.delete(old);
-        };
-    });
-
-    client.storage.on('get', event => {
-        event.data.name = methodPrefix + __uv.meta.url.origin + '@' + event.data.name;
-    });
-
-    client.storage.on('set', event => {
-        if (event.that.__uv$storageObj) {
-            event.that.__uv$storageObj[event.data.name] = event.data.value;
-        };
-        event.data.name = methodPrefix + __uv.meta.url.origin + '@' + event.data.name;
-    });
-
-    client.storage.on('delete', event => {
-        if (event.that.__uv$storageObj) {
-            delete event.that.__uv$storageObj[event.data.name];
-        };
-        event.data.name = methodPrefix + __uv.meta.url.origin + '@' + event.data.name;
-    });
-
-    client.storage.on('getItem', event => {
-        event.data.name = methodPrefix + __uv.meta.url.origin + '@' + event.data.name;
-    });
-
-    client.storage.on('setItem', event => {
-        if (event.that.__uv$storageObj) {
-            event.that.__uv$storageObj[event.data.name] = event.data.value;
-        };
-        event.data.name = methodPrefix + __uv.meta.url.origin + '@' + event.data.name;
-    });
-
-    client.storage.on('removeItem', event => {
-        if (event.that.__uv$storageObj) {
-            delete event.that.__uv$storageObj[event.data.name];
-        };
-        event.data.name = methodPrefix + __uv.meta.url.origin + '@' + event.data.name;
-    });
-
-    client.storage.on('clear', event => {
-        if (event.that.__uv$storageObj) {
-            for (const key of client.nativeMethods.keys.call(null, event.that.__uv$storageObj)) {
-                delete event.that.__uv$storageObj[key];
-                client.storage.removeItem.call(event.that, methodPrefix + __uv.meta.url.origin + '@' + key);
-                event.respondWith();
-            };
-        };
-    });
-
-    client.storage.on('length', event => {
-        if (event.that.__uv$storageObj) {
-            event.respondWith(client.nativeMethods.keys.call(null, event.that.__uv$storageObj).length);
-        };
-    });
-
-    client.storage.on('key', event => {
-        if (event.that.__uv$storageObj) {
-            event.respondWith(
-                (client.nativeMethods.keys.call(null, event.that.__uv$storageObj)[event.data.index] || null)
-            );
-        };
-    });
-
-    client.websocket.on('websocket', async event => {
-        let url;
-        try {
-            url = new URL(event.data.url);
-        } catch(e) {
-            return;
-        };
-
-        const headers = {
-            Host: url.host,
-            Origin: __uv.meta.url.origin,
-            Pragma: 'no-cache',
-            'Cache-Control': 'no-cache',
-            Upgrade: 'websocket',
-            'User-Agent': window.navigator.userAgent,
-            'Connection': 'Upgrade',
-        };
-
-        const cookies = __uv.cookie.serialize(__uv.cookies, { url }, false);
-
-        if (cookies) headers.Cookie = cookies;
-        const protocols = [...event.data.protocols];
-
-        const remote = {
-            protocol: url.protocol,
-            host: url.hostname,
-            port: url.port || (url.protocol === 'wss:' ? '443' : '80'),
-            path: url.pathname + url.search,
-        };
-
-        if (protocols.length) headers['Sec-WebSocket-Protocol'] = protocols.join(', ');
-
-        event.data.url =  (__uv.bare.protocol === 'https:' ? 'wss://' : 'ws://') + __uv.bare.host + __uv.bare.pathname + 'v1/';
-        event.data.protocols = [
-            'bare',
-            __uv.encodeProtocol(JSON.stringify({
-                remote,
-                headers,
-                forward_headers: [
-                    'accept',
-                    'accept-encoding',
-                    'accept-language',
-                    'sec-websocket-extensions',
-                    'sec-websocket-key',
-                    'sec-websocket-version',
-                ],
-            })),
-        ];
-
-        const ws = new event.target(event.data.url, event.data.protocols);
-
-        client.nativeMethods.defineProperty(ws, methodPrefix + 'url', {
-            enumerable: false,
-            value: url.href,
-        });
-
-        event.respondWith(
-            ws
-        );
-    });
-
-    client.websocket.on('url', event => {
-        if ('__uv$url' in event.that) {
-            event.data.value = event.that.__uv$url;
-        };
-    });
-
-    client.websocket.on('protocol', event => {
-        if ('__uv$protocol' in event.that) {
-            event.data.value = event.that.__uv$protocol;
-        };
-    });
-
-    client.function.on('function', event => {
-        event.data.script = __uv.rewriteJS(event.data.script);
-    });
-
-    client.function.on('toString', event => {
-        if (__uv.methods.string in event.that) event.respondWith(event.that[__uv.methods.string]);
-    });
-
-    client.object.on('getOwnPropertyNames', event => {
-        event.data.names = event.data.names.filter(element => !(__uv.filterKeys.includes(element)));
-    });
-
-    client.object.on('getOwnPropertyDescriptors', event => {
-        for (const forbidden of __uv.filterKeys) {
-            delete event.data.descriptors[forbidden];
-        };
-
-    });
-
-    client.style.on('setProperty', event => {
-        if (client.style.dashedUrlProps.includes(event.data.property)) {
-            event.data.value = __uv.rewriteCSS(event.data.value, {
-                context: 'value',
-                ...__uv.meta
-            })
-        };
-    });
-
-    client.style.on('getPropertyValue', event => {
-        if (client.style.dashedUrlProps.includes(event.data.property)) {
-            event.respondWith(
-                __uv.sourceCSS(
-                    event.target.call(event.that, event.data.property),
-                    {
-                        context: 'value',
-                        ...__uv.meta
-                    }
+              t.data.value = e.sourceHtml(t.data.value);
+          }
+        }),
+        r.element.on("setOuterHTML", (t) => {
+          t.data.value = e.rewriteHtml(t.data.value, {
+            document: t.that.tagName === "HTML",
+          });
+        }),
+        r.element.on("getOuterHTML", (t) => {
+          switch (t.that.tagName) {
+            case "HEAD":
+              t.data.value = e
+                .sourceHtml(
+                  t.data.value.replace(
+                    /<head(.*)>(.*)<\/head>/s,
+                    "<op-head$1>$2</op-head>"
+                  )
                 )
+                .replace(/<op-head(.*)>(.*)<\/op-head>/s, "<head$1>$2</head>");
+              break;
+            case "BODY":
+              t.data.value = e
+                .sourceHtml(
+                  t.data.value.replace(
+                    /<body(.*)>(.*)<\/body>/s,
+                    "<op-body$1>$2</op-body>"
+                  )
+                )
+                .replace(/<op-body(.*)>(.*)<\/op-body>/s, "<body$1>$2</body>");
+              break;
+            default:
+              t.data.value = e.sourceHtml(t.data.value, {
+                document: t.that.tagName === "HTML",
+              });
+              break;
+          }
+        }),
+        r.document.on("write", (t) => {
+          if (!t.data.html.length) return !1;
+          t.data.html = [e.rewriteHtml(t.data.html.join(""))];
+        }),
+        r.document.on("writeln", (t) => {
+          if (!t.data.html.length) return !1;
+          t.data.html = [e.rewriteHtml(t.data.html.join(""))];
+        }),
+        r.element.on("insertAdjacentHTML", (t) => {
+          t.data.html = e.rewriteHtml(t.data.html);
+        }),
+        r.eventSource.on("construct", (t) => {
+          t.data.url = e.rewriteUrl(t.data.url);
+        }),
+        r.eventSource.on("url", (t) => {
+          t.data.url = e.rewriteUrl(t.data.url);
+        }),
+        r.idb.on("idbFactoryOpen", (t) => {
+          t.data.name !== "__op" &&
+            (t.data.name = `${e.meta.url.origin}@${t.data.name}`);
+        }),
+        r.idb.on("idbFactoryName", (t) => {
+          t.data.value = t.data.value.slice(e.meta.url.origin.length + 1);
+        }),
+        r.history.on("replaceState", (t) => {
+          t.data.url &&
+            (t.data.url = e.rewriteUrl(
+              t.data.url,
+              "__uv" in t.that ? t.that.__uv.meta : e.meta
+            ));
+        }),
+        r.history.on("pushState", (t) => {
+          t.data.url &&
+            (t.data.url = e.rewriteUrl(
+              t.data.url,
+              "__uv" in t.that ? t.that.__uv.meta : e.meta
+            ));
+        }),
+        r.element.on("getAttribute", (t) => {
+          r.element.hasAttribute.call(
+            t.that,
+            e.attributePrefix + "-attr-" + t.data.name
+          ) &&
+            t.respondWith(
+              t.target.call(t.that, e.attributePrefix + "-attr-" + t.data.name)
             );
-        };
-    });
-
-    if ('CSS2Properties' in window) {
-        for (const key of client.style.urlProps) {
-            client.overrideDescriptor(window.CSS2Properties.prototype, key, {
-                get: (target, that) => {
-                    return __uv.sourceCSS(
-                        target.call(that),
-                        {
-                            context: 'value',
-                            ...__uv.meta
-                        }
-                    )
-                },
-                set: (target, that, val) => {
-                    target.call(
-                        that,
-                        __uv.rewriteCSS(val, {
-                            context: 'value',
-                            ...__uv.meta
-                        })
-                    );
-                }
+        }),
+        r.message.on("postMessage", (t) => {
+          let a = t.data.origin,
+            i = e.call;
+          t.that && (i = t.that.__uv$source.call),
+            (t.data.origin = "*"),
+            (t.data.message = {
+              __data: t.data.message,
+              __origin: (t.that || t.target).__uv$source.location.origin,
+              __to: a,
+            }),
+            t.respondWith(
+              j
+                ? i(t.target, [t.data.message, t.data.transfer], t.that)
+                : i(
+                    t.target,
+                    [t.data.message, t.data.origin, t.data.transfer],
+                    t.that
+                  )
+            );
+        }),
+        r.message.on("data", (t) => {
+          let { value: a } = t.data;
+          typeof a == "object" &&
+            "__data" in a &&
+            "__origin" in a &&
+            t.respondWith(a.__data);
+        }),
+        r.message.on("origin", (t) => {
+          let a = r.message.messageData.get.call(t.that);
+          typeof a == "object" &&
+            a.__data &&
+            a.__origin &&
+            t.respondWith(a.__origin);
+        }),
+        r.overrideDescriptor(o, "origin", { get: () => e.location.origin }),
+        r.node.on("baseURI", (t) => {
+          t.data.value.startsWith(o.location.origin) &&
+            (t.data.value = e.sourceUrl(t.data.value));
+        }),
+        r.element.on("setAttribute", (t) => {
+          if (
+            t.that instanceof y &&
+            t.data.name === "src" &&
+            t.data.value.startsWith("blob:")
+          ) {
+            t.target.call(
+              t.that,
+              e.attributePrefix + "-attr-" + t.data.name,
+              t.data.value
+            ),
+              (t.data.value = e.blobUrls.get(t.data.value));
+            return;
+          }
+          e.attrs.isUrl(t.data.name) &&
+            (t.target.call(
+              t.that,
+              e.attributePrefix + "-attr-" + t.data.name,
+              t.data.value
+            ),
+            (t.data.value = e.rewriteUrl(t.data.value))),
+            e.attrs.isStyle(t.data.name) &&
+              (t.target.call(
+                t.that,
+                e.attributePrefix + "-attr-" + t.data.name,
+                t.data.value
+              ),
+              (t.data.value = e.rewriteCSS(t.data.value, {
+                context: "declarationList",
+              }))),
+            e.attrs.isHtml(t.data.name) &&
+              (t.target.call(
+                t.that,
+                e.attributePrefix + "-attr-" + t.data.name,
+                t.data.value
+              ),
+              (t.data.value = e.rewriteHtml(t.data.value, {
+                ...e.meta,
+                document: !0,
+                injectHead: e.createHtmlInject(
+                  e.handlerScript,
+                  e.bundleScript,
+                  e.clientScript,
+                  e.configScript,
+                  p,
+                  h,
+                  u,
+                  o.location.href
+                ),
+              }))),
+            e.attrs.isSrcset(t.data.name) &&
+              (t.target.call(
+                t.that,
+                e.attributePrefix + "-attr-" + t.data.name,
+                t.data.value
+              ),
+              (t.data.value = e.html.wrapSrcset(t.data.value.toString()))),
+            e.attrs.isForbidden(t.data.name) &&
+              (t.data.name = e.attributePrefix + "-attr-" + t.data.name);
+        }),
+        r.element.on("audio", (t) => {
+          t.data.url = e.rewriteUrl(t.data.url);
+        }),
+        r.element.hookProperty([C, A, I, R], "href", {
+          get: (t, a) => e.sourceUrl(t.call(a)),
+          set: (t, a, [i]) => {
+            r.element.setAttribute.call(a, e.attributePrefix + "-attr-href", i),
+              t.call(a, e.rewriteUrl(i));
+          },
+        }),
+        r.element.hookProperty([U, L, T, y, v, H, $, m, W, N], "src", {
+          get: (t, a) => e.sourceUrl(t.call(a)),
+          set: (t, a, [i]) => {
+            if (
+              new String(i).toString().trim().startsWith("blob:") &&
+              a instanceof y
+            )
+              return (
+                r.element.setAttribute.call(
+                  a,
+                  e.attributePrefix + "-attr-src",
+                  i
+                ),
+                t.call(a, e.blobUrls.get(i) || i)
+              );
+            r.element.setAttribute.call(a, e.attributePrefix + "-attr-src", i),
+              t.call(a, e.rewriteUrl(i));
+          },
+        }),
+        r.element.hookProperty([D], "action", {
+          get: (t, a) => e.sourceUrl(t.call(a)),
+          set: (t, a, [i]) => {
+            r.element.setAttribute.call(a, e.attributePrefix + "-attr-action", i),
+              t.call(a, e.rewriteUrl(i));
+          },
+        }),
+        r.element.hookProperty([v], "srcset", {
+          get: (t, a) =>
+            r.element.getAttribute.call(a, e.attributePrefix + "-attr-srcset") ||
+            t.call(a),
+          set: (t, a, [i]) => {
+            r.element.setAttribute.call(a, e.attributePrefix + "-attr-srcset", i),
+              t.call(a, e.html.wrapSrcset(i.toString()));
+          },
+        }),
+        r.element.hookProperty(U, "integrity", {
+          get: (t, a) =>
+            r.element.getAttribute.call(a, e.attributePrefix + "-attr-integrity"),
+          set: (t, a, [i]) => {
+            r.element.setAttribute.call(
+              a,
+              e.attributePrefix + "-attr-integrity",
+              i
+            );
+          },
+        }),
+        r.element.hookProperty(m, "sandbox", {
+          get: (t, a) =>
+            r.element.getAttribute.call(a, e.attributePrefix + "-attr-sandbox") ||
+            t.call(a),
+          set: (t, a, [i]) => {
+            r.element.setAttribute.call(
+              a,
+              e.attributePrefix + "-attr-sandbox",
+              i
+            );
+          },
+        });
+      let F =
+        m && Object.getOwnPropertyDescriptor(m.prototype, "contentWindow").get;
+      function E(t) {
+        let a = F.call(t);
+        if (!a.__uv)
+          try {
+            P(a);
+          } catch (i) {
+            console.error("catastrophic failure"), console.error(i);
+          }
+      }
+      r.element.hookProperty(m, "contentWindow", {
+        get: (t, a) => (E(a), t.call(a)),
+      }),
+        r.element.hookProperty(m, "contentDocument", {
+          get: (t, a) => (E(a), t.call(a)),
+        }),
+        r.element.hookProperty(m, "srcdoc", {
+          get: (t, a) =>
+            r.element.getAttribute.call(a, e.attributePrefix + "-attr-srcdoc") ||
+            t.call(a),
+          set: (t, a, [i]) => {
+            t.call(
+              a,
+              e.rewriteHtml(i, {
+                document: !0,
+                injectHead: e.createHtmlInject(
+                  e.handlerScript,
+                  e.bundleScript,
+                  e.clientScript,
+                  e.configScript,
+                  p,
+                  h,
+                  u,
+                  o.location.href
+                ),
+              })
+            );
+          },
+        }),
+        r.node.on("getTextContent", (t) => {
+          t.that.tagName === "SCRIPT" &&
+            (t.data.value = e.js.source(t.data.value));
+        }),
+        r.node.on("setTextContent", (t) => {
+          t.that.tagName === "SCRIPT" &&
+            (t.data.value = e.js.rewrite(t.data.value));
+        }),
+        "serviceWorker" in o.navigator &&
+          delete o.Navigator.prototype.serviceWorker,
+        r.document.on("getDomain", (t) => {
+          t.data.value = e.domain;
+        }),
+        r.document.on("setDomain", (t) => {
+          if (
+            !t.data.value
+              .toString()
+              .endsWith(e.meta.url.hostname.split(".").slice(-2).join("."))
+          )
+            return t.respondWith("");
+          t.respondWith((e.domain = t.data.value));
+        }),
+        r.document.on("url", (t) => {
+          t.data.value = e.location.href;
+        }),
+        r.document.on("documentURI", (t) => {
+          t.data.value = e.location.href;
+        }),
+        r.document.on("referrer", (t) => {
+          t.data.value = e.referrer || e.sourceUrl(t.data.value);
+        }),
+        r.document.on("parseFromString", (t) => {
+          if (t.data.type !== "text/html") return !1;
+          t.data.string = e.rewriteHtml(t.data.string, {
+            ...e.meta,
+            document: !0,
+          });
+        }),
+        r.attribute.on("getValue", (t) => {
+          r.element.hasAttribute.call(
+            t.that.ownerElement,
+            e.attributePrefix + "-attr-" + t.data.name
+          ) &&
+            (t.data.value = r.element.getAttribute.call(
+              t.that.ownerElement,
+              e.attributePrefix + "-attr-" + t.data.name
+            ));
+        }),
+        r.attribute.on("setValue", (t) => {
+          e.attrs.isUrl(t.data.name) &&
+            (r.element.setAttribute.call(
+              t.that.ownerElement,
+              e.attributePrefix + "-attr-" + t.data.name,
+              t.data.value
+            ),
+            (t.data.value = e.rewriteUrl(t.data.value))),
+            e.attrs.isStyle(t.data.name) &&
+              (r.element.setAttribute.call(
+                t.that.ownerElement,
+                e.attributePrefix + "-attr-" + t.data.name,
+                t.data.value
+              ),
+              (t.data.value = e.rewriteCSS(t.data.value, {
+                context: "declarationList",
+              }))),
+            e.attrs.isHtml(t.data.name) &&
+              (r.element.setAttribute.call(
+                t.that.ownerElement,
+                e.attributePrefix + "-attr-" + t.data.name,
+                t.data.value
+              ),
+              (t.data.value = e.rewriteHtml(t.data.value, {
+                ...e.meta,
+                document: !0,
+                injectHead: e.createHtmlInject(
+                  e.handlerScript,
+                  e.bundleScript,
+                  e.clientScript,
+                  e.configScript,
+                  p,
+                  h,
+                  u,
+                  o.location.href
+                ),
+              }))),
+            e.attrs.isSrcset(t.data.name) &&
+              (r.element.setAttribute.call(
+                t.that.ownerElement,
+                e.attributePrefix + "-attr-" + t.data.name,
+                t.data.value
+              ),
+              (t.data.value = e.html.wrapSrcset(t.data.value.toString())));
+        }),
+        r.url.on("createObjectURL", (t) => {
+          let a = t.target.call(t.that, t.data.object);
+          if (a.startsWith("blob:" + location.origin)) {
+            let i =
+              "blob:" +
+              (e.meta.url.href !== "about:blank"
+                ? e.meta.url.origin
+                : o.parent.__uv.meta.url.origin) +
+              a.slice(5 + location.origin.length);
+            e.blobUrls.set(i, a), t.respondWith(i);
+          } else t.respondWith(a);
+        }),
+        r.url.on("revokeObjectURL", (t) => {
+          if (e.blobUrls.has(t.data.url)) {
+            let a = t.data.url;
+            (t.data.url = e.blobUrls.get(t.data.url)), e.blobUrls.delete(a);
+          }
+        }),
+        r.storage.on("get", (t) => {
+          t.data.name = l + e.meta.url.origin + "@" + t.data.name;
+        }),
+        r.storage.on("set", (t) => {
+          t.that.__uv$storageObj &&
+            (t.that.__uv$storageObj[t.data.name] = t.data.value),
+            (t.data.name = l + e.meta.url.origin + "@" + t.data.name);
+        }),
+        r.storage.on("delete", (t) => {
+          t.that.__uv$storageObj && delete t.that.__uv$storageObj[t.data.name],
+            (t.data.name = l + e.meta.url.origin + "@" + t.data.name);
+        }),
+        r.storage.on("getItem", (t) => {
+          t.data.name = l + e.meta.url.origin + "@" + t.data.name;
+        }),
+        r.storage.on("setItem", (t) => {
+          t.that.__uv$storageObj &&
+            (t.that.__uv$storageObj[t.data.name] = t.data.value),
+            (t.data.name = l + e.meta.url.origin + "@" + t.data.name);
+        }),
+        r.storage.on("removeItem", (t) => {
+          t.that.__uv$storageObj && delete t.that.__uv$storageObj[t.data.name],
+            (t.data.name = l + e.meta.url.origin + "@" + t.data.name);
+        }),
+        r.storage.on("clear", (t) => {
+          if (t.that.__uv$storageObj)
+            for (let a of r.nativeMethods.keys.call(null, t.that.__uv$storageObj))
+              delete t.that.__uv$storageObj[a],
+                r.storage.removeItem.call(
+                  t.that,
+                  l + e.meta.url.origin + "@" + a
+                ),
+                t.respondWith();
+        }),
+        r.storage.on("length", (t) => {
+          t.that.__uv$storageObj &&
+            t.respondWith(
+              r.nativeMethods.keys.call(null, t.that.__uv$storageObj).length
+            );
+        }),
+        r.storage.on("key", (t) => {
+          t.that.__uv$storageObj &&
+            t.respondWith(
+              r.nativeMethods.keys.call(null, t.that.__uv$storageObj)[
+                t.data.index
+              ] || null
+            );
+        });
+      function f(t, a) {
+        let i = `on${a}`,
+          s = new WeakMap();
+        Reflect.defineProperty(t, i, {
+          enumerable: !0,
+          configurable: !0,
+          get() {
+            return s.has(this) ? s.get(this) : null;
+          },
+          set(n) {
+            typeof n == "function" &&
+              (s.has(this) && this.removeEventListener(a, s.get(this)),
+              s.set(this, n),
+              this.addEventListener(a, n));
+          },
+        });
+      }
+      let V = ["ws:", "wss:"];
+      class c extends EventTarget {
+        #t;
+        #r;
+        #e = "blob";
+        #a = "";
+        #o = "";
+        #i = "";
+        async #s(a, i) {
+          let s = {};
+          Reflect.setPrototypeOf(s, null),
+            (s.Origin = e.meta.url.origin),
+            (s["User-Agent"] = navigator.userAgent),
+            u !== "" && (s.Cookie = u.toString()),
+            (this.#t = await M.createWebSocket(a, s, i, S.proxyIp, S.proxyPort)),
+            (this.#t.binaryType = this.#e),
+            this.#t.addEventListener("message", (d) => {
+              this.dispatchEvent(new MessageEvent("message", d));
+            }),
+            this.#t.addEventListener("open", async (d) => {
+              this.dispatchEvent(new Event("open", d));
+            }),
+            this.#t.addEventListener("error", (d) => {
+              this.dispatchEvent(new ErrorEvent("error", d));
+            }),
+            this.#t.addEventListener("close", (d) => {
+              this.dispatchEvent(new Event("close", d));
             });
-        };
-    } else if ('HTMLElement' in window) {
-
-        client.overrideDescriptor(
-            window.HTMLElement.prototype,
-            'style',
-            {
-                get: (target, that) => {
-                    const value = target.call(that);
-                    if (!value[methodPrefix + 'modifiedStyle']) {
-
-                        for (const key of client.style.urlProps) {
-                            client.nativeMethods.defineProperty(value, key, {
-                                enumerable: true,
-                                configurable: true,
-                                get() {
-                                    const value = client.style.getPropertyValue.call(this, key) || '';
-                                    return __uv.sourceCSS(
-                                        value,
-                                        {
-                                            context: 'value',
-                                            ...__uv.meta
-                                        }
-                                    )
-                                },
-                                set(val) {
-                                    client.style.setProperty.call(this, 
-                                        (client.style.propToDashed[key] || key),
-                                        __uv.rewriteCSS(val, {
-                                            context: 'value',
-                                            ...__uv.meta
-                                        })    
-                                    )
-                                }
-                            });
-                            client.nativeMethods.defineProperty(value, methodPrefix + 'modifiedStyle', {
-                                enumerable: false,
-                                value: true
-                            });
-                        };
-                    };
-                    return value;
-                }
-            }
-        );
-    };
-
-    client.style.on('setCssText', event => {
-        event.data.value = __uv.rewriteCSS(event.data.value, {
-            context: 'declarationList',
-            ...__uv.meta
-        });
-    });
-
-    client.style.on('getCssText', event => {
-        event.data.value = __uv.sourceCSS(event.data.value, {
-            context: 'declarationList',
-            ...__uv.meta
-        });
-    });
-
-    // Proper hash emulation.
-    if (!!window.window) {
-        __uv.addEventListener.call(window, 'hashchange', event => {
-            if (event.__uv$dispatched) return false;
-            event.stopImmediatePropagation();
-            const hash = window.location.hash;
-            client.history.replaceState.call(window.history, '', '', event.oldURL);
-            __uv.location.hash = hash;
-        });
-    };
-
-    client.location.on('hashchange', (oldUrl, newUrl, ctx) => {
-        if (ctx.HashChangeEvent && client.history.replaceState) {
-            client.history.replaceState.call(window.history, '', '', __uv.rewriteUrl(newUrl));
-
-            const event = new ctx.HashChangeEvent('hashchange', { newURL: newUrl, oldURL: oldUrl });
-
-            client.nativeMethods.defineProperty(event, methodPrefix + 'dispatched', {
-                value: true,
-                enumerable: false,
-            }); 
-
-            __uv.dispatchEvent.call(window, event);
-        };
-    });
-
-    // Hooking functions & descriptors
-    client.fetch.overrideRequest();
-    client.fetch.overrideUrl();
-    client.xhr.overrideOpen();
-    client.xhr.overrideResponseUrl();
-    client.element.overrideHtml();
-    client.element.overrideAttribute();
-    client.element.overrideInsertAdjacentHTML();
-    client.element.overrideAudio();
-    // client.element.overrideQuerySelector();
-    client.node.overrideBaseURI();
-    client.node.overrideTextContent();
-    client.attribute.overrideNameValue();
-    client.document.overrideDomain();
-    client.document.overrideURL();
-    client.document.overrideDocumentURI();
-    client.document.overrideWrite();
-    client.document.overrideReferrer();
-    client.document.overrideParseFromString();
-    client.storage.overrideMethods();
-    client.storage.overrideLength();
-    //client.document.overrideQuerySelector();
-    client.object.overrideGetPropertyNames();
-    client.object.overrideGetOwnPropertyDescriptors();
-    client.history.overridePushState();
-    client.history.overrideReplaceState();
-    client.eventSource.overrideConstruct();
-    client.eventSource.overrideUrl();
-    client.websocket.overrideWebSocket();
-    client.websocket.overrideProtocol();
-    client.websocket.overrideUrl();
-    client.url.overrideObjectURL();
-    client.document.overrideCookie();
-    client.message.overridePostMessage();
-    client.message.overrideMessageOrigin();
-    client.message.overrideMessageData();
-    client.workers.overrideWorker();
-    client.workers.overrideAddModule();
-    client.workers.overrideImportScripts();
-    client.workers.overridePostMessage();
-    client.style.overrideSetGetProperty();
-    client.style.overrideCssText();
-    client.navigator.overrideSendBeacon();
-    client.function.overrideFunction();
-    client.function.overrideToString();
-    client.location.overrideWorkerLocation(
-        (href) => {
-            return new URL(__uv.sourceUrl(href));
+          let n = await this.#t.meta;
+          n.headers.has("sec-websocket-protocol") &&
+            (this.#a = n.headers.get("sec-websocket-protocol")),
+            n.headers.has("sec-websocket-extensions") &&
+              (this.#o = n.headers.get("sec-websocket-extensions"));
+          let b = n.rawHeaders["set-cookie"] || [];
+          Array.isArray(b) || (b = []);
+          for (let d of b) document.cookie = d;
         }
-    );
-
-    client.overrideDescriptor(window, 'localStorage', {
-        get: (target, that) => {
-            return (that || window).__uv.lsWrap;
-        },
-    });
-    client.overrideDescriptor(window, 'sessionStorage', {
-        get: (target, that) => {
-            return (that || window).__uv.ssWrap;
-        },
-    });
-
-
-    client.override(window, 'open', (target, that, args) => {
-        if (!args.length) return target.apply(that, args);
-        let [url] = args;
-
-        url = __uv.rewriteUrl(url);
-
-        return target.call(that, url);
-    });
-
-    __uv.$wrap = function(name) {
-        if (name === 'location') return __uv.methods.location;
-        if (name === 'eval') return __uv.methods.eval;
-        return name;
-    };
-
-
-    __uv.$get = function(that) {
-        if (that === window.location) return __uv.location;
-        if (that === window.eval) return __uv.eval;
-        if (that === window.parent) {
-            return window.__uv$parent;
-        };
-        if (that === window.top) {
-            return window.__uv$top;
-        };
-        return that;
-    };
-
-    __uv.eval = client.wrap(window, 'eval', (target, that, args) => {
-        if (!args.length || typeof args[0] !== 'string') return target.apply(that, args);
-        let [script] = args;
-
-        script = __uv.rewriteJS(script);
-        return target.call(that, script);
-    });
-
-    __uv.call = function(target, args, that) {
-        return that ? target.apply(that, args) : target(...args);
-    };
-
-    __uv.call$ = function(obj, prop, args = []) {
-        return obj[prop].apply(obj, args);
-    };
-
-    client.nativeMethods.defineProperty(window.Object.prototype, master, {
-        get: () => {
-            return __uv;
-        },
-        enumerable: false
-    });
-
-    client.nativeMethods.defineProperty(window.Object.prototype, __uv.methods.setSource, {
-        value: function(source) {
-            if (!client.nativeMethods.isExtensible(this)) return this;
-
-            client.nativeMethods.defineProperty(this, __uv.methods.source, {
-                value: source,
-                writable: true,
-                enumerable: false
-            });
-
-            return this;
-        },
-        enumerable: false,
-    });
-
-    client.nativeMethods.defineProperty(window.Object.prototype, __uv.methods.source, {
-        value: __uv,
-        writable: true,
-        enumerable: false
-    });
-
-    client.nativeMethods.defineProperty(window.Object.prototype, __uv.methods.location, {
-        configurable: true,
-        get() {
-            return (this === window.document || this === window) ? __uv.location : this.location;
-        },
-        set(val) {
-            if (this === window.document || this === window) {
-                __uv.location.href = val;
-            } else {
-                this.location = val;
-            };
-        },
-    });
-
-    client.nativeMethods.defineProperty(window.Object.prototype, __uv.methods.parent, {
-        configurable: true,
-        get() {
-            const val = this.parent;
-
-            if (this === window) {
-                try {
-                    return '__uv' in val ? val : this;
-                } catch (e) {
-                    return this;
-                };
-            };
-            return val;
-        },
-        set(val) {
-            this.parent = val;
-        },
-    });
-
-    client.nativeMethods.defineProperty(window.Object.prototype, __uv.methods.top, {
-        configurable: true,
-        get() {
-            const val = this.top;
-
-            if (this === window) {
-                if (val === this.parent) return this[__uv.methods.parent];
-                try {
-                    if (!('__uv' in val)) {
-                        let current = this;
-
-                        while (current.parent !== val) {
-                            current = current.parent
-                        };
-
-                        return '__uv' in current ? current : this;
-
-                    } else {
-                        return val;
-                    };
-                } catch (e) {
-                    return this;
-                };
-            };
-            return val;
-        },
-        set(val) {
-            this.top = val;
-        },
-    });
-
-
-    client.nativeMethods.defineProperty(window.Object.prototype, __uv.methods.eval, {
-        configurable: true,
-        get() {
-            return this === window ? __uv.eval : this.eval;
-        },
-        set(val) {
-            this.eval = val;
-        },
-    });
-};
+        get url() {
+          return this.#i;
+        }
+        constructor(...a) {
+          if ((super(), !a.length))
+            throw new DOMException(
+              "Failed to construct 'WebSocket': 1 argument required, but only 0 present."
+            );
+          let [i, s] = a,
+            n;
+          try {
+            n = new URL(i);
+          } catch {
+            throw new DOMException(
+              `Faiiled to construct 'WebSocket': The URL '${i}' is invalid.`
+            );
+          }
+          if (!V.includes(n.protocol))
+            throw new DOMException(
+              `Failed to construct 'WebSocket': The URL's scheme must be either 'ws' or 'wss'. '${n.protocol}' is not allowed.`
+            );
+          this.#r = this.#s(n, s);
+        }
+        get protocol() {
+          return this.#a;
+        }
+        get extensions() {
+          return this.#o;
+        }
+        get readyState() {
+          return this.#t ? this.#t.readyState : c.CONNECTING;
+        }
+        get binaryType() {
+          return this.#e;
+        }
+        set binaryType(a) {
+          (this.#e = a), this.#t && (this.#t.binaryType = a);
+        }
+        send(a) {
+          if (!this.#t)
+            throw new DOMException(
+              "Failed to execute 'send' on 'WebSocket': Still in CONNECTING state."
+            );
+          this.#t.send(a);
+        }
+        close(a, i) {
+          if (
+            typeof a < "u" &&
+            (typeof a != "number" && (a = 0), a !== 1e3 && (a < 3e3 || a > 4999))
+          )
+            throw new DOMException(
+              `Failed to execute 'close' on 'WebSocket': The code must be either 1000, or between 3000 and 4999. ${a} is neither.`
+            );
+          this.#r.then(() => this.#t.close(a, i));
+        }
+      }
+      f(c.prototype, "close"),
+        f(c.prototype, "open"),
+        f(c.prototype, "message"),
+        f(c.prototype, "error");
+      for (let t of [
+        "url",
+        "protocol",
+        "extensions",
+        "readyState",
+        "binaryType",
+      ]) {
+        let a = Object.getOwnPropertyDescriptor(o.WebSocket.prototype, t),
+          i = Object.getOwnPropertyDescriptor(c.prototype, t);
+        i?.get && a?.get && r.emit("wrap", i.get, a.get),
+          i?.set && a?.set && r.emit("wrap", i.get, a.get);
+      }
+      if (
+        (r.emit("wrap", o.WebSocket.prototype.send, c.prototype.send),
+        r.emit("wrap", o.WebSocket.prototype.close, c.prototype.close),
+        r.override(o, "WebSocket", (t, a, i) => new c(...i), !0),
+        (c.prototype.constructor = o.WebSocket),
+        r.function.on("function", (t) => {
+          t.data.script = e.rewriteJS(t.data.script);
+        }),
+        r.function.on("toString", (t) => {
+          e.methods.string in t.that && t.respondWith(t.that[e.methods.string]);
+        }),
+        r.object.on("getOwnPropertyNames", (t) => {
+          t.data.names = t.data.names.filter((a) => !e.filterKeys.includes(a));
+        }),
+        r.object.on("getOwnPropertyDescriptors", (t) => {
+          for (let a of e.filterKeys) delete t.data.descriptors[a];
+        }),
+        r.style.on("setProperty", (t) => {
+          r.style.dashedUrlProps.includes(t.data.property) &&
+            (t.data.value = e.rewriteCSS(t.data.value, {
+              context: "value",
+              ...e.meta,
+            }));
+        }),
+        r.style.on("getPropertyValue", (t) => {
+          r.style.dashedUrlProps.includes(t.data.property) &&
+            t.respondWith(
+              e.sourceCSS(t.target.call(t.that, t.data.property), {
+                context: "value",
+                ...e.meta,
+              })
+            );
+        }),
+        "CSS2Properties" in o)
+      )
+        for (let t of r.style.urlProps)
+          r.overrideDescriptor(o.CSS2Properties.prototype, t, {
+            get: (a, i) =>
+              e.sourceCSS(a.call(i), { context: "value", ...e.meta }),
+            set: (a, i, s) => {
+              a.call(i, e.rewriteCSS(s, { context: "value", ...e.meta }));
+            },
+          });
+      else
+        "HTMLElement" in o &&
+          r.overrideDescriptor(o.HTMLElement.prototype, "style", {
+            get: (t, a) => {
+              let i = t.call(a);
+              if (!i[l + "modifiedStyle"])
+                for (let s of r.style.urlProps)
+                  r.nativeMethods.defineProperty(i, s, {
+                    enumerable: !0,
+                    configurable: !0,
+                    get() {
+                      let n = r.style.getPropertyValue.call(this, s) || "";
+                      return e.sourceCSS(n, { context: "value", ...e.meta });
+                    },
+                    set(n) {
+                      r.style.setProperty.call(
+                        this,
+                        r.style.propToDashed[s] || s,
+                        e.rewriteCSS(n, { context: "value", ...e.meta })
+                      );
+                    },
+                  }),
+                    r.nativeMethods.defineProperty(i, l + "modifiedStyle", {
+                      enumerable: !1,
+                      value: !0,
+                    });
+              return i;
+            },
+          });
+      r.style.on("setCssText", (t) => {
+        t.data.value = e.rewriteCSS(t.data.value, {
+          context: "declarationList",
+          ...e.meta,
+        });
+      }),
+        r.style.on("getCssText", (t) => {
+          t.data.value = e.sourceCSS(t.data.value, {
+            context: "declarationList",
+            ...e.meta,
+          });
+        }),
+        e.addEventListener.call(o, "hashchange", (t) => {
+          if (t.__uv$dispatched) return !1;
+          t.stopImmediatePropagation();
+          let a = o.location.hash;
+          r.history.replaceState.call(o.history, "", "", t.oldURL),
+            (e.location.hash = a);
+        }),
+        r.location.on("hashchange", (t, a, i) => {
+          if (i.HashChangeEvent && r.history.replaceState) {
+            r.history.replaceState.call(o.history, "", "", e.rewriteUrl(a));
+            let s = new i.HashChangeEvent("hashchange", { newURL: a, oldURL: t });
+            r.nativeMethods.defineProperty(s, l + "dispatched", {
+              value: !0,
+              enumerable: !1,
+            }),
+              e.dispatchEvent.call(o, s);
+          }
+        }),
+        r.fetch.overrideRequest(),
+        r.fetch.overrideUrl(),
+        r.xhr.overrideOpen(),
+        r.xhr.overrideResponseUrl(),
+        r.element.overrideHtml(),
+        r.element.overrideAttribute(),
+        r.element.overrideInsertAdjacentHTML(),
+        r.element.overrideAudio(),
+        r.node.overrideBaseURI(),
+        r.node.overrideTextContent(),
+        r.attribute.overrideNameValue(),
+        r.document.overrideDomain(),
+        r.document.overrideURL(),
+        r.document.overrideDocumentURI(),
+        r.document.overrideWrite(),
+        r.document.overrideReferrer(),
+        r.document.overrideParseFromString(),
+        r.storage.overrideMethods(),
+        r.storage.overrideLength(),
+        r.object.overrideGetPropertyNames(),
+        r.object.overrideGetOwnPropertyDescriptors(),
+        r.idb.overrideName(),
+        r.idb.overrideOpen(),
+        r.history.overridePushState(),
+        r.history.overrideReplaceState(),
+        r.eventSource.overrideConstruct(),
+        r.eventSource.overrideUrl(),
+        r.url.overrideObjectURL(),
+        r.document.overrideCookie(),
+        r.message.overridePostMessage(),
+        r.message.overrideMessageOrigin(),
+        r.message.overrideMessageData(),
+        r.workers.overrideWorker(),
+        r.workers.overrideAddModule(),
+        r.workers.overrideImportScripts(),
+        r.workers.overridePostMessage(),
+        r.style.overrideSetGetProperty(),
+        r.style.overrideCssText(),
+        r.navigator.overrideSendBeacon(),
+        r.function.overrideFunction(),
+        r.function.overrideToString(),
+        r.location.overrideWorkerLocation((t) => new URL(e.sourceUrl(t))),
+        r.overrideDescriptor(o, "localStorage", {
+          get: (t, a) => (a || o).__uv.lsWrap,
+        }),
+        r.overrideDescriptor(o, "sessionStorage", {
+          get: (t, a) => (a || o).__uv.ssWrap,
+        }),
+        r.override(o, "open", (t, a, i) => {
+          if (!i.length) return t.apply(a, i);
+          let [s] = i;
+          return (s = e.rewriteUrl(s)), t.call(a, s);
+        }),
+        (e.$wrap = function (t) {
+          return t === "location"
+            ? e.methods.location
+            : t === "eval"
+            ? e.methods.eval
+            : t;
+        }),
+        (e.$get = function (t) {
+          return t === o.location
+            ? e.location
+            : t === o.eval
+            ? e.eval
+            : t === o.parent
+            ? o.__uv$parent
+            : t === o.top
+            ? o.__uv$top
+            : t;
+        }),
+        (e.eval = r.wrap(o, "eval", (t, a, i) => {
+          if (!i.length || typeof i[0] != "string") return t.apply(a, i);
+          let [s] = i;
+          return (s = e.rewriteJS(s)), t.call(a, s);
+        })),
+        (e.call = function (t, a, i) {
+          return i ? t.apply(i, a) : t(...a);
+        }),
+        (e.call$ = function (t, a, i = []) {
+          return t[a].apply(t, i);
+        }),
+        r.nativeMethods.defineProperty(o.Object.prototype, k, {
+          get: () => e,
+          enumerable: !1,
+        }),
+        r.nativeMethods.defineProperty(o.Object.prototype, e.methods.setSource, {
+          value: function (t) {
+            return r.nativeMethods.isExtensible(this)
+              ? (r.nativeMethods.defineProperty(this, e.methods.source, {
+                  value: t,
+                  writable: !0,
+                  enumerable: !1,
+                }),
+                this)
+              : this;
+          },
+          enumerable: !1,
+        }),
+        r.nativeMethods.defineProperty(o.Object.prototype, e.methods.source, {
+          value: e,
+          writable: !0,
+          enumerable: !1,
+        }),
+        r.nativeMethods.defineProperty(o.Object.prototype, e.methods.location, {
+          configurable: !0,
+          get() {
+            return this === o.document || this === o ? e.location : this.location;
+          },
+          set(t) {
+            this === o.document || this === o
+              ? (e.location.href = t)
+              : (this.location = t);
+          },
+        }),
+        r.nativeMethods.defineProperty(o.Object.prototype, e.methods.parent, {
+          configurable: !0,
+          get() {
+            let t = this.parent;
+            if (this === o)
+              try {
+                return "__uv" in t ? t : this;
+              } catch {
+                return this;
+              }
+            return t;
+          },
+          set(t) {
+            this.parent = t;
+          },
+        }),
+        r.nativeMethods.defineProperty(o.Object.prototype, e.methods.top, {
+          configurable: !0,
+          get() {
+            let t = this.top;
+            if (this === o) {
+              if (t === this.parent) return this[e.methods.parent];
+              try {
+                if ("__uv" in t) return t;
+                {
+                  let a = this;
+                  for (; a.parent !== t; ) a = a.parent;
+                  return "__uv" in a ? a : this;
+                }
+              } catch {
+                return this;
+              }
+            }
+            return t;
+          },
+          set(t) {
+            this.top = t;
+          },
+        }),
+        r.nativeMethods.defineProperty(o.Object.prototype, e.methods.eval, {
+          configurable: !0,
+          get() {
+            return this === o ? e.eval : this.eval;
+          },
+          set(t) {
+            this.eval = t;
+          },
+        });
+    }
+  })();
+  //# sourceMappingURL=uv.handler.js.map
