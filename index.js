@@ -5,8 +5,7 @@ const chemical = new ChemicalServer({
   scramjet: false,
   rammerhead: false,
 });
-
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 5505;
 
 chemical.app.use(
   express.static("public", {

@@ -1,7 +1,47 @@
-const search = document.getElementById("search");
+const form = document.getElementById("uv-form");
+const address = document.getElementById("uv-address");
+const error = document.getElementById("uv-error");
+const errorCode = document.getElementById("uv-error-code");
 
-    search.addEventListener("keydown", async function (e) {
-        if (e.key == "Enter" && window.chemicalLoaded && e.target.value) {
-            window.location = await window.chemicalEncode(e.target.value)
+const ocu = [
+    "ocu://what",
+]
+
+function search(input, template) {
+    try {
+        return new URL(input).toString();
+    } catch (err) {
+    }
+
+    try {
+        const url = new URL(`https://${input}`);
+        if (url.hostname.includes(".")) return url.toString();
+    } catch (err) {
+    }
+
+    return template.replace("%s", encodeURIComponent(input));
+}
+
+function containsPointKeyword(input, PointList) {
+    for (let i = 0; i < PointList.length; i++) {
+        if (input.includes(PointList[i])) {
+            return true;
         }
-    })
+    }
+    return false;
+}
+
+form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (window.chemicalLoaded) {
+        if (containsPointKeyword(address.value, Point)) {
+            location.replace('/uv/ocu/hvtrs8%2F-odfnile%2Fdknm-eaoe%2Cfkrgbcsgarp%2Ccmm')
+        }
+        else {
+            const url = search(address.value, "https://www.google.com/search?q=%s");
+
+            location.href = await window.chemicalEncode(url);
+        }
+    }
+});

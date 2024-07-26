@@ -1,9 +1,8 @@
 {
-  "name": "ocu!",
+  "name": "ocu",
   "version": "1",
-  "description": " bypassing made easy. ",
+  "description": "ocu! | a web proxy",
   "author": "molkify",
-  "license": "MIT",
   "type": "module",
   "scripts": {
     "start": "node index.js"

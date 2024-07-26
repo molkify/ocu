@@ -1,16 +1,29 @@
-$.getJSON("/json/quotes.json", function (data) {
-	let index = data[Math.floor(Math.random() * data.length)];
-	if (index.includes("OGNUM1") && index.includes("SQRTNUM1")) {
-		let ognum = Math.floor(Math.random() * 3000);
-		index = "the square root of " + ognum + " is " + Math.sqrt(ognum);
-	} else if (index.includes("CURRENTURL")) {
-		index = window.location.hostname;
+document.addEventListener('DOMContentLoaded', function () {
+	// subtitle
+	function changeSub(num) {
+		document.getElementById("subtitle").innerText = tell[num];
 	}
-	if (document.readyState === "complete") {
-		document.getElementById("quotes").innerHTML = index;
-	} else {
-		document.addEventListener("DOMContentLoaded", () => {
-			document.getElementById("quotes").innerHTML = index;
-		});
+
+	var tell = [
+		"pay attention during school",
+		"dial 911 cause im behind you /j",
+		"#ocu4life",
+		"hey man i miss the like collarbones B)",
+		"also check out classwork heaven",
+		"molki.pages.dev",
+		"piracy on top",
+		"github.com/molkify/ocu",
+		"github.com/chemicaljs/chemicaljs",
+		"rare1k doxxed someone a few days ago so immortal 2 loses"
+	];
+
+	var howmany = tell.length;
+	var randomIndex = Math.floor(Math.random() * howmany);
+
+	document.getElementById("subtitle").innerText = tell[randomIndex];
+
+	function changeSplash(num) {
+		var sub = "Set current splash to splash " + num + ", " + tell[num];
+		document.getElementById("subtitle").innerText = tell[num];
+		return sub;
 	}
-});
