@@ -6,17 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>ocu!</title>
     <link rel="stylesheet" href="main.css" />
-    <script src="/uv/uv.bundle.js"></script>
-    <script src="/uv/uv.config.js"></script>
-    <script src="/baremux/index.js"></script>
-
-    <script>
-    if ("serviceWorker" in navigator) {
-        window.addEventListener("load", async () => {
-            await navigator.serviceWorker.register("/uv/sw.js");
-        });
-    }
-    </script>
+    <script src="/chemical.js"></script>
+    <script src="main.js" defer></script>
+    <script src="js/cloaker.js"></script>
   </head>
   <body>
   <br>
@@ -29,19 +21,12 @@
     \____/\___/ \____/ (_)   
   </pre>
     <h4>#ocu4life</h4>
-    <input type="text" id="urlInput" placeholder="Enter URL here">
-    <button id="searchButton">Search Text</button>
+    <form id="uv-form" style="width: 100%;">
+      <input id="uv-search-engine" value="https://google.com/search?q=%s" type="hidden" />
+      <input style="width: 50%; text-align: center;" id="uv-address" type="text" placeholder="Input a URL or search query" />
+    </form>
     <br>
-    <br>
-    <br>
-    <hr>
-    <select id="switcher">
-        <option value="">--Please Choose an Option--</option>
-        <option value="epoxy">Epoxy</option>
-        <option value="bare">Bare</option>
-    </select>
-
-    <iframe id="iframeWindow" class="iframeWindow"></iframe>
+    <iframe style="display: none;" id="uv-frame"></iframe>
     <br>
     <div class="image-container">
       <a href="/ocu/service/hvtrs8%2F-wuw%2Cgmoelg.aoo%2F%3Dgus%5Drf%3Dqsn">
@@ -57,6 +42,5 @@
           <img src="/img/shuttleai.png" alt="[ shuttle ai ]">
       </a>
     </div>
-    <script src="example.js"></script>
   </body>
 </html>
