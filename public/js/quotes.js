@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
-	// subtitle
+	// subtitles
 	function changeSub(num) {
-		document.getElementById("subtitle").innerText = tell[num];
+		document.getElementById("subtitles").innerText = tell[num];
 	}
 
 	var tell = [
