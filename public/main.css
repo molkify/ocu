@@ -63,3 +63,18 @@ a {
   border-radius: 10px;
   border: 2px solid #fff;
 } 
+
+input {
+    width: 100%;
+    background-color: transparent;
+    border: 1.5px #000000 solid;
+    border-radius: 5px;
+    font-size: 14px;
+    padding: 12px;
+    text-align: center;
+    color: white;
+    outline: none;
+  
+    transition: color;
+    transition-duration: 100ms;
+}
