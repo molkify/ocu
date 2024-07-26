@@ -1,14 +1,12 @@
 {
-  "name": "ultraviolet-static",
-  "main": "lib/index.js",
-  "version": "1.0.5",
-  "type": "module",
-  "files": [
-    "public",
-    "lib"
-  ],
-  "devDependencies": {
-    "eslint": "^8.23.0",
-    "prettier": "^2.7.1"
-  }
+  "dependencies": {
+    "@titaniumnetwork-dev/ultraviolet": "^3.2.6",
+    "@tomphttp/bare-server-node": "^2.0.3",
+    "wisp-server-node": "^1.1.3",
+    "@mercuryworkshop/bare-mux": "^2.0.3",
+    "@mercuryworkshop/epoxy-transport": "^2.1.3",
+    "@mercuryworkshop/bare-as-module3": "^2.2.2",
+    "express": "^4.18.2"
+  },
+  "type": "module"
 }

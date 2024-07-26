@@ -1,44 +1,41 @@
-"use strict";
-/**
- * @type {HTMLFormElement}
- */
-const form = document.getElementById("uv-form");
-/**
- * @type {HTMLInputElement}
- */
-const address = document.getElementById("uv-address");
-/**
- * @type {HTMLInputElement}
- */
-const searchEngine = document.getElementById("uv-search-engine");
-/**
- * @type {HTMLParagraphElement}
- */
-const error = document.getElementById("uv-error");
-/**
- * @type {HTMLPreElement}
- */
-const errorCode = document.getElementById("uv-error-code");
 const connection = new BareMux.BareMuxConnection("/baremux/worker.js")
+const wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+const bareUrl = (location.protocol === "https:" ? "https" : "http") + "://" + location.host + "/bare/"
+document // makes it so you can press enter to submit as opposed to just being able to press a button
+    .getElementById("urlInput")
+    .addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            document.getElementById("searchButton").click();
+        }
+    });
 
-form.addEventListener("submit", async (event) => {
-	event.preventDefault();
+document.getElementById("searchButton").onclick = async function (event) {
+    event.preventDefault();
 
-	try {
-		await registerSW();
-	} catch (err) {
-		error.textContent = "Failed to register service worker.";
-		errorCode.textContent = err.toString();
-		throw err;
-	}
+    let url = document.getElementById("urlInput").value; // if no periods are detected in the input, search google instead
+    let searchUrl = "https://www.google.com/search?q=";
 
-	const url = search(address.value, searchEngine.value);
-
-	let frame = document.getElementById("uv-frame");
-	frame.style.display = "block";
-	let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
-	if (await connection.getTransport() !== "/epoxy/index.mjs") {
+    if (!url.includes(".")) {
+        url = searchUrl + encodeURIComponent(url);
+    } else {
+        if (!url.startsWith("http://") && !url.startsWith("https://")) { // if no http or https is detected, add https automatically
+            url = "https://" + url;
+        }
+    }
+	if (!await connection.getTransport()) {
 		await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
 	}
-	frame.src = __uv$config.prefix + __uv$config.encodeUrl(url);
-});
+    iframeWindow.src = __uv$config.prefix + __uv$config.encodeUrl(url);
+};
+
+document.getElementById("switcher").onselect = async function (event) {
+    switch (event.target.value) {
+        case "epoxy":
+            await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+            break;
+        case "bare":
+            await connection.setTransport("/baremod/index.mjs", [bareUrl]);
+            break;
+    }
+}
