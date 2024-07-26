@@ -14,7 +14,7 @@ try {
 if (!inFrame && !navigator.userAgent.includes("Firefox")) {
     const popup = open("about:blank", "_blank")
     if (!popup || popup.closed) {
-        alert(" The following tab shows in your history. Allow popups and redirects to hide this from showing up in your history. do not do this if your browser doesnt support iframes ")
+        alert(" The following tab shows in your history. Allow popups and redirects to hide this from showing up in your history. do NOT do this if your browser doesnt support iframes ")
     } else {
         const doc = popup.document
         const iframe = doc.createElement("iframe")

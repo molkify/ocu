@@ -1,18 +1,10 @@
 {
-  "name": "html-css",
-  "version": "1.0.0",
-  "description": "A template for HTML and CSS",
-  "main": "index.html",
-  "scripts": {
-    "start": "serve"
-  },
-  "keywords": [
-    "html",
-    "css"
-  ],
-  "author": "Ives van Hoorne",
-  "license": "MIT",
+  "name": "ultraviolet-static",
+  "version": "1.0.5",
+  "type": "module",
+
   "devDependencies": {
-    "serve": "11.2.0"
+    "eslint": "^8.23.0",
+    "prettier": "^2.7.1"
   }
 }

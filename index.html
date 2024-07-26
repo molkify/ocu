@@ -6,14 +6,19 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>ocu!</title>
     <link rel="stylesheet" href="main.css" />
-    <script src="ocu/uv.bundle.js"></script>
-    <script src="ocu/uv.config.js"></script>
-    <script src="register-sw.js"></script>
-    <script src="search.js" defer=""></script>
-    <script src="js/cloaker.js"></script>
+    <link rel="stylesheet" href="index.css" />
+    <script src="baremux/index.js" defer></script>
+    <script src="epoxy/index.js" defer></script>
+    <script src="uv/uv.bundle.js" defer></script>
+    <script src="uv/uv.config.js" defer></script>
+    <script src="register-sw.js" defer></script>
+    <script src="search.js" defer></script>
+    <script src="index.js" defer></script>
   </head>
   <body>
   <br>
+  <noscript><a>[ why'd you think that this site would work without javascript lmao? turn it back on lil bro ]</a></noscript>
+  
   <pre style="font: 10px/9px monospace; color: white; text-align: center;">  ______
     ________________  ____  /
     _  __ \  ___/  / / /_  / 
@@ -21,28 +26,32 @@
     \____/\___/ \____/ (_)   
   </pre>
     <h4>#ocu4life</h4>
-  <input type="text" class="input" placeholder="Search With Google or Type A Url">
+    <form id="uv-form" class="flex-center">
+      <input
+        id="uv-search-engine"
+        value="https://www.google.com/search?q=%s"
+        type="hidden"
+      />
+      <input id="uv-address" type="text" placeholder="search with google or type a url" />
+    </form>
     <br>
     <div class="image-container">
-      <a href="/service/hvtrs8%2F-wuw%2Cgmoelg.aoo%2F%3Dgus%5Drf%3Dqsn">
+      <a href="/uv/service/hvtrs8%2F-wuw%2Cgmoelg.aoo%2F%3Dgus%5Drf%3Dqsn">
           <img src="/img/google.png" alt="[ google ]">
       </a>
-      <a href="/service/hvtrs8%2F-wuw%2Ctuivcj.vv-">
+      <a href="/uv/service/hvtrs8%2F-wuw%2Ctuivcj.vv-">
           <img src="/img/twitch.jpg" alt="[ twitch ]">
       </a>
-      <a href="/service/hvtrs8%2F-ilvkdkows%2Cilcmgliue%60.lev%2Fdegd-pmpwlcr">
+      <a href="/uv/service/hvtrs8%2F-ilvkdkows%2Cilcmgliue%60.lev%2Fdegd-pmpwlcr">
           <img src="/img/invidious-colored-vector.svg" alt="[ invidious ]">
       </a>
-      <a href="/service/hvtrs8%2F-sjuvtneci%2Carp-awtj%2Fnoeil%3Faanl%60aakWrn%3D'2Dcjav">
+      <a href="/uv/service/hvtrs8%2F-sjuvtneci%2Carp-awtj%2Fnoeil%3Faanl%60aakWrn%3D'2Dcjav">
           <img src="/img/shuttleai.png" alt="[ shuttle ai ]">
       </a>
   </div>
     <br>
     <br>
     <br>
-    <hr class="short-centered">
-<a class="a" href="learn.html"><pre style="font: 20px monospace; color: white; text-align: center;">[ games ]</pre></a>
-    <br>
-    <noscript><hr class="short-centered"> <br><br> <a>[ why'd you think that this site would work without javascript lmao? turn it back on lil bro ]</a></noscript>
+    <iframe style="display: none;" id="uv-frame"></iframe>
   </body>
 </html>
