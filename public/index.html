@@ -7,7 +7,7 @@
     <title>ocu!</title>
     <link rel="stylesheet" href="main.css" />
     <script src="/chemical.js"></script>
-    <script src="public/main.js" defer></script>
+    <script src="js/main.js" defer></script>
     <script src="js/cloaker.js"></script>
     <script src="js/quotes.js"></script>
   </head>
@@ -21,9 +21,11 @@
     / /_/ / /__ / /_/ / /_/  
     \____/\___/ \____/ (_)   
   </pre>
-  <h2><span id="subtitle">...</span></h2>
-    <input id="search" placeholder="Enter URL Or Search With Google">
-    <p id="uv-error"></p>
-     <pre id="uv-error-code"></pre>
+  <p><span id="subtitle">...</span></p>
+  <form id="uv-form" style="width: 100%;">
+    <input id="uv-search-engine" value="https://google.com/search?q=%s" type="hidden" />
+    <input style="width: 50%; text-align: center;" id="uv-address" type="text" placeholder="Input a URL or search query" />
+  </form>
+  <iframe style="display: none;" id="uv-frame"></iframe>
   </body>
 </html>
