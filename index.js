@@ -21,5 +21,5 @@ chemical.app.use((req, res) => {
 });
 
 chemical.server.listen(port, () => {
-  console.log(`Oxide listening on port ${port}`);
+  console.log(`ocu listening on port ${port}`);
 });
