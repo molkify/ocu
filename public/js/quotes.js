@@ -20,10 +20,10 @@ document.addEventListener('DOMContentLoaded', function () {
 	var howmany = tell.length;
 	var randomIndex = Math.floor(Math.random() * howmany);
 
-	document.getElementById("subtitle").innerText = tell[randomIndex];
+	document.getElementById("subtitles").innerText = tell[randomIndex];
 
 	function changeSplash(num) {
 		var sub = "Set current splash to splash " + num + ", " + tell[num];
-		document.getElementById("subtitle").innerText = tell[num];
+		document.getElementById("subtitles").innerText = tell[num];
 		return sub;
 	}
