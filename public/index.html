@@ -23,19 +23,11 @@
     \____/\___/ \____/ (_)   
   </pre>
   <p id="subtitles">molki.pages.dev</p>
-  <form id="uv-form" class="flex-center">
-    <input
-      id="uv-search-engine"
-      value="https://www.google.com/search?q=%s"
-      type="hidden"
-    />
-    <input id="uv-address" type="text" placeholder="Search the web freely" />
+  <form id="uv-form" style="width: 100%;">
+    <input id="uv-search-engine" value="https://google.com/search?q=%s" type="hidden" />
+    <input style="width: 50%; text-align: center;" id="uv-address" type="text" placeholder="Input a URL or search query" />
   </form>
-  <div class="desc left-margin">
-    <p id="uv-error"></p>
-    <pre id="uv-error-code"></pre>
-  </div>
   <br>
-  <iframe id="uv-frame"></iframe>
+  <iframe style="display: none;" id="uv-frame"></iframe>
   </body>
 </html>
