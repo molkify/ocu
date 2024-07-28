@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
 		"molki.pages.dev",
 		"piracy on top",
 		"github.com/molkify/ocu",
-		"github.com/chemicaljs/chemicaljs",
+		"github.com/chemicaljs/chemical",
 		"rare1k doxxed someone a few days ago so immortal 2 loses"
 	];
 
