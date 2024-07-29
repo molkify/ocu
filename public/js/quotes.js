@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded',) function () {
 	// subtitles
 	function changeSub(num) {
 		document.getElementById("subtitles").innerText = tell[num];

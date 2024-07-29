@@ -1,7 +1,7 @@
 let inFrame
 // This code isnt mine obviously
 // Original code comes from interstellar
-// check there site out since your already here
+// check their site out since your already here
 // discord.gg/interstellar
 
 
