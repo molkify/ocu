@@ -1,25 +1,44 @@
-import { ChemicalServer } from "chemicaljs";
-import express from "express";
+"use strict";
+/**
+ * @type {HTMLFormElement}
+ */
+const form = document.getElementById("uv-form");
+/**
+ * @type {HTMLInputElement}
+ */
+const address = document.getElementById("uv-address");
+/**
+ * @type {HTMLInputElement}
+ */
+const searchEngine = document.getElementById("uv-search-engine");
+/**
+ * @type {HTMLParagraphElement}
+ */
+const error = document.getElementById("uv-error");
+/**
+ * @type {HTMLPreElement}
+ */
+const errorCode = document.getElementById("uv-error-code");
+const connection = new BareMux.BareMuxConnection("/baremux/worker.js")
 
-const chemical = new ChemicalServer({
-  scramjet: false,
-  rammerhead: false,
-});
+form.addEventListener("submit", async (event) => {
+	event.preventDefault();
 
-const port = process.env.PORT || 8080;
+	try {
+		await registerSW();
+	} catch (err) {
+		error.textContent = "Failed to register service worker.";
+		errorCode.textContent = err.toString();
+		throw err;
+	}
 
-chemical.app.use(
-  express.static("public", {
-    index: "index.html",
-    extensions: ["html"],
-  })
-);
+	const url = search(address.value, searchEngine.value);
 
-chemical.app.use((req, res) => {
-  res.status(404);
-  res.sendFile("public/404.html", { root: "." });
-});
-
-chemical.server.listen(port, () => {
-  console.log(`ocu listening on port ${port}`);
+	let frame = document.getElementById("uv-frame");
+	frame.style.display = "block";
+	let wispUrl = (location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/wisp/";
+	if (await connection.getTransport() !== "/epoxy/index.mjs") {
+		await connection.setTransport("/epoxy/index.mjs", [{ wisp: wispUrl }]);
+	}
+	frame.src = __uv$config.prefix + __uv$config.encodeUrl(url);
 });

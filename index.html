@@ -1,15 +1,31 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <title>Redirect Notice</title>
-  <script>
-    window.onload = function() {
-      window.location.href = "/public/"; // Replace with your desired URL
-    };
-  </script>
-</head>
-<body>
-  <h1>Redirecting...</h1>
-  <p>If you are not redirected, <a href="/public/">click here</a>.</p>
-</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>ocu!</title>
+    <link rel="stylesheet" href="main.css" />
+    <script data-wisp="wss://wisp.mercurywork.shop/" src="/chemical.js"></script>
+    <script src="js/cloaker.js" defer></script>
+    <script src="js/quotes.js" defer></script>
+  </head>
+  <body>
+  <br>
+  <noscript><a>[ why'd you think that this site would work without javascript lmao? turn it back on lil bro ]</a></noscript>
+  
+  <pre style="font: 10px/9px monospace; color: white; text-align: center;">  ______
+    ________________  ____  /
+    _  __ \  ___/  / / /_  / 
+    / /_/ / /__ / /_/ / /_/  
+    \____/\___/ \____/ (_)   
+  </pre>
+  <p id="subtitles">molki.pages.dev</p>
+  <form id="uv-form" style="width: 100%;">
+    <input id="uv-search-engine" value="https://google.com/search?q=%s" type="hidden" />
+    <input style="width: 50%; text-align: center;" id="uv-address" type="text" placeholder="Input a URL or search query" />
+  </form>
+  <br>
+  <iframe style="display: none;" id="uv-frame"></iframe>
+  </body>
 </html>
